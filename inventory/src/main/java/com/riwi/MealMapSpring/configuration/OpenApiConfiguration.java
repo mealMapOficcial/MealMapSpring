@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(info = @Info(
-        title = "Riwi Movies",
+        title = "Meal Map",
         version = "1.0",
         description = "Esto es un API"
 ))
