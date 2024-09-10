@@ -21,6 +21,7 @@ public class Ingredients {
     private String name;
     @Column(name = "measure",nullable = false)
     private String measure;
+    private double quantity;
     @ManyToMany(mappedBy = "ingredients")
     private  List<Dishes> dishes;
     @OneToOne(mappedBy = "ingredients")

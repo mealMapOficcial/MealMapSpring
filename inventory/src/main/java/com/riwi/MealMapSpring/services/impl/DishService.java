@@ -88,14 +88,20 @@ StockRepository stockRepository;
        return dishes.getIngredients().stream()
                .allMatch(ingredients -> {
                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-                   return stock != null || stock.getAmount() > 0;
+                   if(stock == null){
+                       return false;
+                   }
+                   return stock.getAmount() >= 150;
                });
     }
+
 @Override
     public List<DishResponse>  getAvailableDish(){
         List<DishResponse> availableDish = new ArrayList<>();
         List<Dishes> dishesEntity = this.dishRepository.findAll();
+
         for(Dishes dishes : dishesEntity){
+
             if(isAvailable(dishes)){
                 DishResponse dishResponse = DishResponse.builder()
                         .name(dishes.getName())

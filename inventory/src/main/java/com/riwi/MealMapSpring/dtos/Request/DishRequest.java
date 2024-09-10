@@ -16,6 +16,7 @@ public class DishRequest {
 
     private  String name;
     private double price;
+    private double quatity;
     private TypeOfDishes typeOfDishes;
     private List<RequestIngredients> ingredients;
 }
