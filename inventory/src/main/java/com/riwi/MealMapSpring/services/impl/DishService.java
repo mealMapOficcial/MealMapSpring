@@ -96,15 +96,17 @@ StockRepository stockRepository;
        return dishes.getIngredients().stream()
                .allMatch(ingredients -> {
                    Optional<DishesIngredients> dishesIngredients =
-                           this.iDishIngredientR.findByIngredientsIdAndDishesId(dishes.getId(),
-                                   ingredients.getId());
+                           this.iDishIngredientR.findByIngredientsIdAndDishesId(ingredients.getId(),
+                                   dishes.getId());
                           if(dishesIngredients.isEmpty()){
+                              System.out.println("vacio");
                               return false;
                           }
                           double getQuantity = dishesIngredients.get().getQuantity();
 
                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
                    if(stock == null){
+                       System.out.println("no existe");
                        return false;
                    }
                    return stock.getAmount() >= getQuantity;
