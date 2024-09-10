@@ -1,9 +1,11 @@
 package com.riwi.MealMapSpring.services.impl;
 
 import com.riwi.MealMapSpring.Entities.Dishes;
+import com.riwi.MealMapSpring.Entities.DishesIngredients;
 import com.riwi.MealMapSpring.Entities.Ingredients;
 import com.riwi.MealMapSpring.Entities.Stock;
 import com.riwi.MealMapSpring.Repository.Interfaces.DishRepository;
+import com.riwi.MealMapSpring.Repository.Interfaces.IDishIngredientR;
 import com.riwi.MealMapSpring.Repository.Interfaces.IngredientsRepository;
 import com.riwi.MealMapSpring.Repository.Interfaces.StockRepository;
 import com.riwi.MealMapSpring.dtos.Request.DishRequest;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DishService implements IDishService {
@@ -22,6 +25,11 @@ public class DishService implements IDishService {
 DishRepository dishRepository;
 @Autowired
 IngredientsRepository ingredientsRepository;
+
+@Autowired
+IDishIngredientR iDishIngredientR;
+
+
 
 @Autowired
 StockRepository stockRepository;
@@ -87,11 +95,19 @@ StockRepository stockRepository;
     private boolean isAvailable(Dishes dishes){
        return dishes.getIngredients().stream()
                .allMatch(ingredients -> {
+                   Optional<DishesIngredients> dishesIngredients =
+                           this.iDishIngredientR.findByIngredientsIdAndDishesId(dishes.getId(),
+                                   ingredients.getId());
+                          if(dishesIngredients.isEmpty()){
+                              return false;
+                          }
+                          double getQuantity = dishesIngredients.get().getQuantity();
+
                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
                    if(stock == null){
                        return false;
                    }
-                   return stock.getAmount() >= 150;
+                   return stock.getAmount() >= getQuantity;
                });
     }
 
