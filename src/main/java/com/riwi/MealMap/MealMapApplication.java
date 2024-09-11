@@ -8,6 +8,7 @@ public class MealMapApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MealMapApplication.class, args);
+		System.out.println("Hello World");
 	}
 
 }

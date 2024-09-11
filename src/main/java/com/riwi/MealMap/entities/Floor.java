@@ -5,20 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
-@Entity
+@Entity(name = "floors")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TypeOfDrinks {
+public class Floor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)
-    private String nameOfDrinks;
+    private Integer numberOfTables;
 
-    @OneToMany(mappedBy = "typeOfDrinks")
-    private Set<Drinks> drinks;
+    @OneToMany(mappedBy = "floor")
+    private List<Table> tables;
 }
