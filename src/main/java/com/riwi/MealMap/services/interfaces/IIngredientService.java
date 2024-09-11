@@ -8,6 +8,7 @@ public interface IIngredientService extends
         Create<IngredientsWithoutId, Ingredient>,
         ReadByName<Ingredient, String>,
         ReadAll<Ingredient>,
+        ReadById<Ingredient, Integer>,
         Delete<Integer>,
         Update<Integer, Ingredient> {
 }

@@ -5,9 +5,9 @@ import com.riwi.MealMap.entities.Ingredient;
 import com.riwi.MealMap.interfaces.IngredientRepository;
 import com.riwi.MealMap.services.interfaces.IIngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +19,8 @@ public class IngredientImpl implements IIngredientService {
     IngredientRepository ingredientRepository;
 
     @Override
-    @PostMapping()
     public ResponseEntity<Ingredient> create(IngredientsWithoutId ingredientDTO) {
+
         Ingredient ingredient = Ingredient.builder()
                 .name(ingredientDTO.getName())
                 .price(ingredientDTO.getPrice())
@@ -29,12 +29,17 @@ public class IngredientImpl implements IIngredientService {
 
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
-        return ResponseEntity.ok(savedIngredient);
+        return ResponseEntity.status(HttpStatus.OK).body(savedIngredient);
     }
 
     @Override
     public List<Ingredient> readAll() {
-        return List.of();
+        return ingredientRepository.findAll();
+    }
+
+    @Override
+    public Optional<Ingredient> readById(Integer id) {
+        return ingredientRepository.findById(id);
     }
 
     @Override
@@ -50,12 +55,25 @@ public class IngredientImpl implements IIngredientService {
     }
 
     @Override
-    public void delete(Integer integer) {
-
+    public void delete(Integer id) {
+        ingredientRepository.deleteById(id);
     }
 
     @Override
     public ResponseEntity<Ingredient> update(Integer id, Ingredient ingredient) {
-        return null;
+        Ingredient existingIngredient = ingredientRepository.findById(id).orElse(null);
+
+        if (existingIngredient != null) {
+
+            existingIngredient.setName(ingredient.getName());
+            existingIngredient.setPrice(ingredient.getPrice());
+            existingIngredient.setWeight(ingredient.getWeight());
+
+            Ingredient savedIngredient = ingredientRepository.save(existingIngredient);
+            return ResponseEntity.ok(savedIngredient);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 }

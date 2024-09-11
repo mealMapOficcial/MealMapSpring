@@ -7,6 +7,7 @@ import com.riwi.MealMap.services.CRUD.*;
 public interface IIngredientController extends
         Create<IngredientsWithoutId, Ingredient>,
         ReadByName<Ingredient, String>,
+        ReadById<Ingredient, Integer>,
         ReadAll<Ingredient>,
         Delete<Integer>,
         Update<Integer, Ingredient> {

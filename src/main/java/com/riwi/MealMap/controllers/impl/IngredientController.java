@@ -4,14 +4,13 @@ import com.riwi.MealMap.controllers.interfaces.IIngredientController;
 import com.riwi.MealMap.dtos.request.Ingredient.IngredientsWithoutId;
 import com.riwi.MealMap.entities.Ingredient;
 import com.riwi.MealMap.services.impl.IngredientImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/ingredients")
@@ -21,18 +20,27 @@ public class IngredientController implements IIngredientController {
     IngredientImpl ingredientService;
 
     @Override
-    public ResponseEntity<Ingredient> create(IngredientsWithoutId entity) {
-        return null;
+    @PostMapping("/create")
+    public ResponseEntity<Ingredient> create (@Valid @RequestBody IngredientsWithoutId ingredient) {
+        return ingredientService.create(ingredient);
     }
 
     @Override
-    public void delete(Integer id) {
-
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable Integer id) {
+        ingredientService.delete(id);
     }
 
     @Override
+    @GetMapping
     public List<Ingredient> readAll() {
-        return List.of();
+        return ingredientService.readAll();
+    }
+
+    @Override
+    @GetMapping("/readById/{id}")
+    public Optional<Ingredient> readById(@PathVariable Integer id) {
+        return ingredientService.readById(id);
     }
 
     @Override
@@ -42,7 +50,9 @@ public class IngredientController implements IIngredientController {
     }
 
     @Override
-    public ResponseEntity<Ingredient> update(Integer integer, Ingredient ingredient) {
-        return null;
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Ingredient> update(@PathVariable Integer id,@RequestBody Ingredient ingredient) {
+        return ingredientService.update(id, ingredient);
     }
+
 }
