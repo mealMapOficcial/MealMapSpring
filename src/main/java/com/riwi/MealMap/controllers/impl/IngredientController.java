@@ -26,7 +26,7 @@ public class IngredientController implements IIngredientController {
     }
 
     @Override
-    public void delete(Integer integer) {
+    public void delete(Integer id) {
 
     }
 
