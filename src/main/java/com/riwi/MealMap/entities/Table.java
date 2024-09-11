@@ -5,19 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "tables")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Entities {
+public class Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)
-    private String name;
+    private Integer numberOfChairs;
+
+    @Column(nullable = false)
+    private Boolean disponibility;
 
     @ManyToOne
-    @JoinColumn
-    private Permitions permitions;
+    @JoinColumn(nullable = false)
+    private Floor floor;
+
 }

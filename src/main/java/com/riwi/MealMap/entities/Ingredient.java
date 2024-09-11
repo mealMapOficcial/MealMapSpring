@@ -2,14 +2,16 @@ package com.riwi.MealMap.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "ingredients")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Dishes {
+@Builder
+public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,11 +22,6 @@ public class Dishes {
     @Column(nullable = false)
     private Float price;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private TypeOfDishes typeOfDishes;
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Ingredients ingredients;
+    @Column(nullable = false)
+    private String weight;
 }
