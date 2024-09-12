@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,9 @@ public class IngredientController implements IIngredientController {
 
     @Autowired
     IngredientImpl ingredientService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     @PostMapping("/create")
@@ -40,6 +44,11 @@ public class IngredientController implements IIngredientController {
     @Override
     @GetMapping("/readById/{id}")
     public Optional<Ingredient> readById(@PathVariable Integer id) {
+        String url = "http://localhost:3000/orders";
+        String response = restTemplate.getForObject(url, String.class);
+
+        System.out.println(response);
+
         return ingredientService.readById(id);
     }
 
