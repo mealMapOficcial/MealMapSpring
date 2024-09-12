@@ -3,6 +3,7 @@ package com.riwi.MealMap.controllers.impl;
 import com.riwi.MealMap.controllers.interfaces.IIngredientController;
 import com.riwi.MealMap.dtos.request.Ingredient.IngredientsWithoutId;
 import com.riwi.MealMap.entities.Ingredient;
+import com.riwi.MealMap.services.impl.ApiService;
 import com.riwi.MealMap.services.impl.IngredientImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class IngredientController implements IIngredientController {
     IngredientImpl ingredientService;
 
     @Autowired
-    private RestTemplate restTemplate;
+    RestTemplate restTemplate;
 
     @Override
     @PostMapping("/create")
@@ -44,6 +45,9 @@ public class IngredientController implements IIngredientController {
     @Override
     @GetMapping("/readById/{id}")
     public Optional<Ingredient> readById(@PathVariable Integer id) {
+        String url = "http://localhost:3000/orders";
+        String response = restTemplate.getForObject(url, String.class);
+        System.out.println(response);
         return ingredientService.readById(id);
     }
 
