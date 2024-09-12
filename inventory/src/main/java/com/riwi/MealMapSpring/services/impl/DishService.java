@@ -14,6 +14,7 @@ import com.riwi.MealMapSpring.dtos.Response.DishResponse;
 import com.riwi.MealMapSpring.services.interfacesEntity.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,21 +100,21 @@ StockRepository stockRepository;
                            this.iDishIngredientR.findByIngredientsIdAndDishesId(ingredients.getId(),
                                    dishes.getId());
                           if(dishesIngredients.isEmpty()){
-                              System.out.println("vacio");
+
                               return false;
                           }
                           double getQuantity = dishesIngredients.get().getQuantity();
 
                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
                    if(stock == null){
-                       System.out.println("no existe");
                        return false;
                    }
                    return stock.getAmount() >= getQuantity;
                });
     }
 
-@Override
+    @Transactional(readOnly = true)
+    @Override
     public List<DishResponse>  getAvailableDish(){
         List<DishResponse> availableDish = new ArrayList<>();
         List<Dishes> dishesEntity = this.dishRepository.findAll();

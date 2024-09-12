@@ -26,5 +26,5 @@ public class DishesIngredients {
     private Ingredients ingredients;
 
     @Column(name = "quantity")
-    private int quantity;
+    private double quantity;
 }

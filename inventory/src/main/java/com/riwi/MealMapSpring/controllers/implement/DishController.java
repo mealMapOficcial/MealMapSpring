@@ -23,7 +23,7 @@ public class DishController implements IDishController {
         DishResponse dishResponse = this.dishService.create(dishRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(dishResponse);
     }
-
+// http://localhost:8080/mealmap/available
     @Override
     @GetMapping("/available")
     @ResponseStatus(HttpStatus.OK)

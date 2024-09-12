@@ -19,5 +19,5 @@ public class Stock {
     @JoinColumn(name = "ingredients_id",unique = true)
     private Ingredients ingredients;
     @Column(nullable = false)
-    private float amount;
+    private double amount;
 }
