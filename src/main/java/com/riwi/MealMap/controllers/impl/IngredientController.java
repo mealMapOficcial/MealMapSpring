@@ -47,7 +47,6 @@ public class IngredientController implements IIngredientController {
     public Optional<Ingredient> readById(@PathVariable Integer id) {
         String url = "http://localhost:3000/orders";
         String response = restTemplate.getForObject(url, String.class);
-
         System.out.println(response);
         return ingredientService.readById(id);
     }
