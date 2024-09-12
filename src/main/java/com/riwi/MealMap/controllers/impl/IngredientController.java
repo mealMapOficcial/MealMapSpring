@@ -45,9 +45,12 @@ public class IngredientController implements IIngredientController {
     @Override
     @GetMapping("/readById/{id}")
     public Optional<Ingredient> readById(@PathVariable Integer id) {
+<<<<<<< HEAD
         String url = "http://localhost:3000/orders";
         String response = restTemplate.getForObject(url, String.class);
         System.out.println(response);
+=======
+>>>>>>> dd6d44c (Repair errors in develop)
         return ingredientService.readById(id);
     }
 
