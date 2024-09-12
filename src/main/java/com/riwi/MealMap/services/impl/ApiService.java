@@ -6,7 +6,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class ApiService {
-
     @Autowired
     private RestTemplate restTemplate;
 
