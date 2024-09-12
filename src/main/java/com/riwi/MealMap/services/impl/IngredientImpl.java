@@ -75,5 +75,4 @@ public class IngredientImpl implements IIngredientService {
             return ResponseEntity.notFound().build();
         }
     }
-
 }
