@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity(name = "dishes")
 @Data
 @NoArgsConstructor
@@ -20,6 +22,16 @@ public class Dish {
 
     @Column(nullable = false)
     private Double priceOfDish;
+
+    @OneToMany
+    @JoinColumn(nullable = false)
+    private List<IngredientsByDish> ingredientsByDish;
+
+    private Double valueOfDish() {
+        return ingredientsByDish.stream()
+                .mapToDouble(ingredientByDish -> ingredientByDish.getIngredient().getPrice())
+                .sum();
+    }
 
     //@ManyToOne
     //@JoinColumn(nullable = false)

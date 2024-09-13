@@ -20,7 +20,7 @@ public class Ingredient {
     private String name;
 
     @Column(nullable = false)
-    private Float price;
+    private Double price;
 
     @Column(nullable = false)
     private String weight;

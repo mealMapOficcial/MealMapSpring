@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IngredientsByDishes {
+public class IngredientsByDish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
