@@ -10,13 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-public interface StockRepository extends JpaRepository<Stock,Long> {
+public interface StockRepository extends JpaRepository<Stock, Long> {
 
 
     @Query("SELECT s FROM Stock s WHERE s.ingredients.id = :idIngredient")
     Stock findByIngredientId(@Param("idIngredient") Long idIngredient);
-
-
 
 
 }

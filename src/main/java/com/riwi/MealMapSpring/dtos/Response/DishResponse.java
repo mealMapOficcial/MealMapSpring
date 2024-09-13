@@ -1,5 +1,6 @@
 package com.riwi.MealMapSpring.dtos.Response;
 
+import com.riwi.MealMapSpring.Entities.Ingredients;
 import com.riwi.MealMapSpring.Enum.TypeOfDishes;
 import lombok.*;
 
@@ -14,6 +15,8 @@ public class DishResponse {
     private String name;
     private double price;
     private TypeOfDishes typeOfDishes;
+    private boolean promotion;
+    private List<IngredientsResponse> ingredients;
 
 
 }

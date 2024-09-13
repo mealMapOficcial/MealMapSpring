@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 public class IngredientsResponse {
+
     private String name;
     private String measure;
 

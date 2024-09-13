@@ -11,6 +11,7 @@ import com.riwi.MealMapSpring.Repository.Interfaces.StockRepository;
 import com.riwi.MealMapSpring.dtos.Request.DishRequest;
 import com.riwi.MealMapSpring.dtos.Request.RequestIngredients;
 import com.riwi.MealMapSpring.dtos.Response.DishResponse;
+import com.riwi.MealMapSpring.dtos.Response.IngredientsResponse;
 import com.riwi.MealMapSpring.services.interfacesEntity.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,21 +20,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DishService implements IDishService {
-@Autowired
-DishRepository dishRepository;
-@Autowired
-IngredientsRepository ingredientsRepository;
+    @Autowired
+    DishRepository dishRepository;
+    @Autowired
+    IngredientsRepository ingredientsRepository;
 
-@Autowired
-IDishIngredientR iDishIngredientR;
+    @Autowired
+    IDishIngredientR iDishIngredientR;
 
 
+    @Autowired
+    StockRepository stockRepository;
 
-@Autowired
-StockRepository stockRepository;
     @Override
     public DishResponse create(DishRequest request) {
         Dishes dishes = Dishes.builder()
@@ -45,7 +47,7 @@ StockRepository stockRepository;
 
         List<RequestIngredients> ingredientsRequest = request.getIngredients();
         List<Ingredients> ingredientsList = new ArrayList<>();
-        for(RequestIngredients requestIngredients : ingredientsRequest){
+        for (RequestIngredients requestIngredients : ingredientsRequest) {
             List<Ingredients> ingredients = this.ingredientsRepository.findByName(requestIngredients.getName());
 
             if (ingredients.isEmpty()) {
@@ -54,7 +56,7 @@ StockRepository stockRepository;
             ingredientsList.add(ingredients.get(0));
         }
 
-        if(hasEnoughStock(ingredientsList)){
+        if (hasEnoughStock(ingredientsList)) {
             dishes.setIngredients(ingredientsList);
             updateStock(ingredientsList);
 
@@ -65,7 +67,7 @@ StockRepository stockRepository;
                     .build();
             return dishResponse;
         } else {
-     throw  new RuntimeException("Not enough stock to create that dish ");
+            throw new RuntimeException("Not enough stock to create that dish ");
         }
 
 
@@ -83,53 +85,63 @@ StockRepository stockRepository;
         });
     }
 
-    private boolean hasEnoughStock(List<Ingredients> ingredientsList){
-        for(Ingredients ingredients: ingredientsList){
+    private boolean hasEnoughStock(List<Ingredients> ingredientsList) {
+        for (Ingredients ingredients : ingredientsList) {
             Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-            if(stock == null || stock.getAmount() == 0){
+            if (stock == null || stock.getAmount() == 0) {
                 return false;
             }
         }
-        return  true;
+        return true;
     }
 
-    private boolean isAvailable(Dishes dishes){
-       return dishes.getIngredients().stream()
-               .allMatch(ingredients -> {
-                   Optional<DishesIngredients> dishesIngredients =
-                           this.iDishIngredientR.findByIngredientsIdAndDishesId(ingredients.getId(),
-                                   dishes.getId());
-                          if(dishesIngredients.isEmpty()){
+    private boolean isAvailable(Dishes dishes) {
+        return dishes.getIngredients().stream()
+                .allMatch(ingredients -> {
+                    Optional<DishesIngredients> dishesIngredients =
+                            this.iDishIngredientR.findByIngredientsIdAndDishesId(ingredients.getId(),
+                                    dishes.getId());
+                    if (dishesIngredients.isEmpty()) {
 
-                              return false;
-                          }
-                          double getQuantity = dishesIngredients.get().getQuantity();
+                        return false;
+                    }
+                    double getQuantity = dishesIngredients.get().getQuantity();
 
-                   Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-                   if(stock == null){
-                       return false;
-                   }
-                   return stock.getAmount() >= getQuantity;
-               });
+                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
+                    if (stock == null) {
+                        return false;
+                    }
+                    return stock.getAmount() >= getQuantity;
+                });
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<DishResponse>  getAvailableDish(){
+    public List<DishResponse> getAvailableDish() {
         List<DishResponse> availableDish = new ArrayList<>();
         List<Dishes> dishesEntity = this.dishRepository.findAll();
 
-        for(Dishes dishes : dishesEntity){
+        for (Dishes dishes : dishesEntity) {
 
-            if(isAvailable(dishes)){
+            if (isAvailable(dishes)) {
                 DishResponse dishResponse = DishResponse.builder()
                         .name(dishes.getName())
                         .price(dishes.getPrice())
                         .typeOfDishes(dishes.getTypeOfDishes())
-                        .build();
+                        .promotion(dishes.isPromotion())
+
+                        .ingredients(dishes.getIngredients().stream()
+                                .map(ingredient -> IngredientsResponse.builder()
+                                        .name(ingredient.getName())
+                                        .measure(ingredient.getMeasure())
+                                        .build())
+                              .collect(Collectors.toList()))
+
+                              .build();
+
                 availableDish.add(dishResponse);
             }
         }
-      return availableDish;
+        return availableDish;
     }
 }

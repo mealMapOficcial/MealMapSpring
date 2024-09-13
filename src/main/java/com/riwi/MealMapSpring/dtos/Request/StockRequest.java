@@ -14,5 +14,4 @@ public class StockRequest {
     private int amount;
 
 
-
 }

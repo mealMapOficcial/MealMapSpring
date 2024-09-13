@@ -15,8 +15,8 @@ public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ingredients_id",unique = true)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ingredients_id", unique = true)
     private Ingredients ingredients;
     @Column(nullable = false)
     private double amount;

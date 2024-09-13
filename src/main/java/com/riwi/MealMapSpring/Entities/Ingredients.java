@@ -17,15 +17,13 @@ public class Ingredients {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name",nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "measure",nullable = false)
+    @Column(name = "measure", nullable = false)
     private String measure;
     private double quantity;
     @ManyToMany(mappedBy = "ingredients")
-    private  List<Dishes> dishes;
-    @OneToOne(mappedBy = "ingredients")
-    private Stock stock;
+    private List<Dishes> dishes;
 
 
 
