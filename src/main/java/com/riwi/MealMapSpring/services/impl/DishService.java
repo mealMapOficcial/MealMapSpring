@@ -42,6 +42,7 @@ public class DishService implements IDishService {
                 .name(request.getName())
                 .price(request.getPrice())
                 .typeOfDishes(request.getTypeOfDishes())
+                .promotion(request.isPromotion())
                 .build();
         dishRepository.save(dishes);
 
@@ -64,6 +65,7 @@ public class DishService implements IDishService {
                     .name(dishes.getName())
                     .typeOfDishes(dishes.getTypeOfDishes())
                     .price(dishes.getPrice())
+                    .promotion(dishes.isPromotion())
                     .build();
             return dishResponse;
         } else {

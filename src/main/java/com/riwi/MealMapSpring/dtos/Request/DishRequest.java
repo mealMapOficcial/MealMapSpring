@@ -17,5 +17,6 @@ public class DishRequest {
     private double price;
     private double quatity;
     private TypeOfDishes typeOfDishes;
+    private boolean promotion;
     private List<RequestIngredients> ingredients;
 }
