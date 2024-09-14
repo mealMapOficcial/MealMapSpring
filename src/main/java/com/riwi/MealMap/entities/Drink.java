@@ -27,7 +27,7 @@ public class Drink {
     @JoinColumn(nullable = false)
     private List<IngredientsByDrink> ingredientsByDrink;
 
-    private Double valueOfDrink() {
+    public Double valueOfDrink() {
         return ingredientsByDrink.stream()
                 .mapToDouble(ingredientByDrink -> ingredientByDrink.getIngredient().getPrice())
                 .sum();

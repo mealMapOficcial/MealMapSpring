@@ -1,7 +1,6 @@
 package com.riwi.MealMap.services.impl;
 
-import com.riwi.MealMap.configuration.webSocket.WebSocketHandler;
-import com.riwi.MealMap.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.entities.Ingredient;
 import com.riwi.MealMap.interfaces.IngredientRepository;
 import com.riwi.MealMap.services.interfaces.IIngredientService;
@@ -35,8 +34,6 @@ public class IngredientImpl implements IIngredientService {
 
     @Override
     public List<Ingredient> readAll() {
-        WebSocketHandler webSocketHandler = new WebSocketHandler();
-
         return ingredientRepository.findAll();
     }
 
@@ -78,5 +75,4 @@ public class IngredientImpl implements IIngredientService {
             return ResponseEntity.notFound().build();
         }
     }
-
 }

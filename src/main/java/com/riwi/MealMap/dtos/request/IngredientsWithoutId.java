@@ -1,4 +1,4 @@
-package com.riwi.MealMap.dtos.request.Ingredient;
+package com.riwi.MealMap.dtos.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

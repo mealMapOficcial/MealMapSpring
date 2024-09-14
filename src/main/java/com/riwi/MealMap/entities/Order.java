@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity(name = "orders")
 @Data
 @NoArgsConstructor
@@ -21,6 +23,9 @@ public class Order {
     @Column(nullable = false)
     private Integer quantityOfDrinks;
 
+    @Column(nullable = false)
+    private LocalDate dateCreated;
+
     //@ManyToOne
     //@JoinColumn(nullable = false)
     //private PayMethod payMethod;
@@ -32,5 +37,4 @@ public class Order {
     //@ManyToOne
     //@JoinColumn(nullable = false)
     //private Table table;
-
 }

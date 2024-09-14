@@ -31,9 +31,9 @@ public class OrderImpl implements IOrderService {
         return orderRepository.findAll();
     }
 
+    @Override
     public List<Order> readOrdersOfTheDay() {
-        List<DrinksByOrder> drinksByOrder = drinksByOrderRepository.findAllByOrder();
         LocalDate today = LocalDate.now();
-        return orderRepository.findByOrderDate(today);
+        return orderRepository.findByDateCreated(today);
     }
 }
