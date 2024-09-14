@@ -1,7 +1,7 @@
 package com.riwi.MealMap.controllers.impl;
 
 import com.riwi.MealMap.controllers.interfaces.IIngredientController;
-import com.riwi.MealMap.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.entities.Ingredient;
 import com.riwi.MealMap.services.impl.IngredientImpl;
 import jakarta.validation.Valid;
