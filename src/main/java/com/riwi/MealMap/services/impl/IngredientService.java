@@ -1,6 +1,7 @@
 package com.riwi.MealMap.services.impl;
 
 import com.riwi.MealMap.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.entities.Dish;
 import com.riwi.MealMap.entities.Ingredient;
 import com.riwi.MealMap.interfaces.IngredientRepository;
 import com.riwi.MealMap.services.interfaces.IIngredientService;
@@ -13,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class IngredientImpl implements IIngredientService {
+public class IngredientService implements IIngredientService {
 
     @Autowired
     IngredientRepository ingredientRepository;
 
     @Override
-    public ResponseEntity<Ingredient> create(IngredientsWithoutId ingredientDTO) {
+    public ResponseEntity<Ingredient> createDTO(IngredientsWithoutId ingredientDTO) {
 
         Ingredient ingredient = Ingredient.builder()
                 .name(ingredientDTO.getName())
@@ -29,7 +30,7 @@ public class IngredientImpl implements IIngredientService {
 
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
-        return ResponseEntity.status(HttpStatus.OK).body(savedIngredient);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedIngredient);
     }
 
     @Override
@@ -44,7 +45,6 @@ public class IngredientImpl implements IIngredientService {
 
     @Override
     public ResponseEntity<Ingredient> readByName(String name) {
-
         Optional<Ingredient> ingredient = ingredientRepository.findByName(name);
 
         if (ingredient.isPresent()) {

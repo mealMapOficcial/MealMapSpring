@@ -5,7 +5,7 @@ import com.riwi.MealMap.entities.Ingredient;
 import com.riwi.MealMap.services.CRUD.*;
 
 public interface IIngredientService extends
-        Create<IngredientsWithoutId, Ingredient>,
+        CreateDTO<IngredientsWithoutId, Ingredient>,
         ReadByName<Ingredient, String>,
         ReadAll<Ingredient>,
         ReadById<Ingredient, Integer>,
