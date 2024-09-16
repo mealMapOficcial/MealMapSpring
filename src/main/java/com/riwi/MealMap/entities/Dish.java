@@ -26,7 +26,7 @@ public class Dish {
 
     @ManyToOne
     @JoinColumn(name = "type_dishes_id", nullable = false)
-    private TypeDishes typeDishes;
+    private TypeDish typeDish;
 
     @ManyToMany
     @JoinTable(

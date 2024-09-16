@@ -1,8 +1,7 @@
 package com.riwi.MealMap.dtos.request.Ingredient;
 
 import com.riwi.MealMap.entities.Ingredient;
-import com.riwi.MealMap.entities.TypeDishes;
-import jakarta.persistence.*;
+import com.riwi.MealMap.entities.TypeDish;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -25,7 +24,7 @@ public class DishWithoutId {
     private Float price;
 
     @NotNull(message = "TypeDishes is required")
-    private TypeDishes typeDishes;
+    private TypeDish typeDish;
 
     @NotNull(message = "Ingrediens is required")
     private Set<Ingredient> ingredient;

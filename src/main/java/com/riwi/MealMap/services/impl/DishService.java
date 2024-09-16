@@ -2,7 +2,6 @@ package com.riwi.MealMap.services.impl;
 
 import com.riwi.MealMap.dtos.request.Ingredient.DishWithoutId;
 import com.riwi.MealMap.entities.Dish;
-import com.riwi.MealMap.entities.Ingredient;
 import com.riwi.MealMap.interfaces.DishRepository;
 import com.riwi.MealMap.services.interfaces.IDishService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class DishService implements IDishService {
         Dish dish = Dish.builder()
                 .name(dishDTO.getName())
                 .price(dishDTO.getPrice())
-                .typeDishes(dishDTO.getTypeDishes())
+                .typeDish(dishDTO.getTypeDish())
                 .ingredients(dishDTO.getIngredient())
                 .build();
 
@@ -69,7 +68,7 @@ public class DishService implements IDishService {
 
             existingDish.setName(dish.getName());
             existingDish.setPrice(dish.getPrice());
-            existingDish.setTypeDishes(dish.getTypeDishes());
+            existingDish.setTypeDish(dish.getTypeDish());
             existingDish.setIngredients(dish.getIngredients());
 
             Dish savedDish = dishRepository.save(existingDish);

@@ -26,7 +26,7 @@ public class Drink {
 
     @ManyToOne
     @JoinColumn(name = "type_drinks_id", nullable = false)
-    private TypeDrinks typeDrinks;
+    private TypeDrink typeDrink;
 
     @ManyToMany
     @JoinTable(
