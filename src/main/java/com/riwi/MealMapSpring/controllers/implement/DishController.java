@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import com.riwi.MealMapSpring.dtos.exception.ErrorResponse;
 
 import java.util.List;
 
@@ -27,9 +26,9 @@ public class DishController implements IDishController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dishResponse);
     }
 
-//     http://localhost:8080/mealmap/available
+//     http://localhost:8082/mealmap/available
     @Override
-    @GetMapping("/available")
+    @GetMapping("/read")
     @ResponseStatus(HttpStatus.OK)
     public List<DishResponse> getAvailableDish() {
         try{

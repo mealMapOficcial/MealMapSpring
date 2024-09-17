@@ -121,7 +121,7 @@ public class DishService implements IDishService {
     @Override
     public List<DishResponse> getAvailableDish() {
         List<DishResponse> availableDish = new ArrayList<>();
-        List<Dishes> dishesEntity = this.dishRepository.findAll();
+        List<Dishes> dishesEntity = this.dishRepository.findDishesWithIngredients();
 
         for (Dishes dishes : dishesEntity) {
 

@@ -18,11 +18,13 @@ public class Dishes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false)
     private double price;
-    @Column(nullable = false)
+
 
     @PrePersist
     public void prePersist() {
@@ -33,6 +35,7 @@ public class Dishes {
 
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "dishes_ingredients",
             joinColumns = @JoinColumn(name = "dishes_id"),
