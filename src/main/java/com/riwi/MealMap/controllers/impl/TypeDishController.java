@@ -1,17 +1,12 @@
 package com.riwi.MealMap.controllers.impl;
 
-import com.riwi.MealMap.dtos.request.Ingredient.TypeDishWithoutId;
-import com.riwi.MealMap.entities.Dish;
+import com.riwi.MealMap.dtos.request.Ingredient.TypeDishWithName;
 import com.riwi.MealMap.entities.TypeDish;
-import com.riwi.MealMap.services.impl.DishService;
 import com.riwi.MealMap.services.impl.TypeDishService;
 import com.riwi.MealMap.services.interfaces.ITypeDishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -27,21 +22,25 @@ public class TypeDishController implements ITypeDishService {
     RestTemplate restTemplate;
 
     @Override
-    public ResponseEntity<TypeDish> createDTO(TypeDishWithoutId typeDish) {
+    @PostMapping("/create")
+    public ResponseEntity<TypeDish> createDTO(TypeDishWithName typeDish) {
         return typeDishService.createDTO(typeDish);
     }
 
     @Override
+    @DeleteMapping("delete/{id}")
     public void delete(@PathVariable Integer id) {
         typeDishService.delete(id);
     }
 
     @Override
+    @GetMapping("/readAll")
     public List<TypeDish> readAll() {
         return typeDishService.readAll();
     }
 
     @Override
+    @GetMapping("/readById/{id}")
     public Optional<TypeDish> readById(@PathVariable Integer id) {
         String url = "http://localhost:3000/orders";
         String response = restTemplate.getForObject(url, String.class);
@@ -53,11 +52,13 @@ public class TypeDishController implements ITypeDishService {
     }
 
     @Override
+    @GetMapping("/readByName/{name}")
     public ResponseEntity<TypeDish> readByName(@PathVariable String name) {
         return typeDishService.readByName(name);
     }
 
     @Override
+    @PutMapping("/update/{id}")
     public ResponseEntity<TypeDish> update(@PathVariable Integer id,@RequestBody TypeDish typeDish) {
         return typeDishService.update(id, typeDish);
     }

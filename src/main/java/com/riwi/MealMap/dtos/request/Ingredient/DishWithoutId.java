@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -24,8 +25,9 @@ public class DishWithoutId {
     private Float price;
 
     @NotNull(message = "TypeDishes is required")
-    private TypeDish typeDish;
+    private Integer typeDishId;
 
     @NotNull(message = "Ingrediens is required")
-    private Set<Ingredient> ingredient;
+    private List<Integer> ingredientIds;
+
 }

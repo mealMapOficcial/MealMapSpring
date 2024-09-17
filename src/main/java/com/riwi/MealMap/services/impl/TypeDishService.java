@@ -1,8 +1,6 @@
 package com.riwi.MealMap.services.impl;
 
-import com.riwi.MealMap.dtos.request.Ingredient.DishWithoutId;
-import com.riwi.MealMap.dtos.request.Ingredient.TypeDishWithoutId;
-import com.riwi.MealMap.entities.Dish;
+import com.riwi.MealMap.dtos.request.Ingredient.TypeDishWithName;
 import com.riwi.MealMap.entities.TypeDish;
 import com.riwi.MealMap.interfaces.TypeDishRepository;
 import com.riwi.MealMap.services.interfaces.ITypeDishService;
@@ -21,11 +19,10 @@ public class TypeDishService implements ITypeDishService {
     TypeDishRepository typeDishRepository;
 
     @Override
-    public ResponseEntity<TypeDish> createDTO(TypeDishWithoutId typeDishDTO) {
+    public ResponseEntity<TypeDish> createDTO(TypeDishWithName typeDishDTO) {
 
         TypeDish typeDish = TypeDish.builder()
                 .name(typeDishDTO.getName())
-                .dish(typeDishDTO.getDish())
                 .build();
 
         TypeDish savedTypeDish = typeDishRepository.save(typeDish);
@@ -67,7 +64,6 @@ public class TypeDishService implements ITypeDishService {
         if (existingTypeDish != null) {
 
             existingTypeDish.setName(typeDish.getName());
-            existingTypeDish.setDish(typeDish.getDish());
 
             TypeDish savedTypeDish = typeDishRepository.save(existingTypeDish);
             return ResponseEntity.ok(savedTypeDish);

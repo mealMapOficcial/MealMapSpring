@@ -20,6 +20,6 @@ public class TypeDish {
 
     private String name;
 
-    @OneToMany(mappedBy = "typeDishes")
+    @OneToMany(mappedBy = "typeDish")
     private List<Dish> dish;
 }

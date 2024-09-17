@@ -22,6 +22,6 @@ public class TypeDrink {
 
     private String typeDrinks;
 
-    @OneToMany(mappedBy = "typeDrinks")
+    @OneToMany(mappedBy = "typeDrink")
     private List<Drink> drink;
 }
