@@ -1,7 +1,9 @@
 package com.riwi.MealMap.domain.entities;
 
+import com.riwi.MealMap.domain.enums.TypeOfDishes;
 import com.riwi.MealMap.domain.enums.TypeOfDrinks;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +12,8 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Set;
 
-@Entity(name = "drinks")
+@Entity
+@Table(name = "drinks")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,9 +41,9 @@ public class Drink {
 
     @ManyToMany
     @JoinTable(
-            name = "ingredients_by_drinks",
-            joinColumns = @JoinColumn(name = "drink_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+            name = "drinks_ingredients",
+            joinColumns = @JoinColumn(name = "drinks_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredients_id")
     )
     private List<Ingredient> ingredients;
 }

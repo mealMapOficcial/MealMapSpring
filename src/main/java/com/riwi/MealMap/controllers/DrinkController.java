@@ -2,9 +2,14 @@ package com.riwi.MealMap.controllers;
 
 import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutId;
 import com.riwi.MealMap.application.dtos.request.Ingredient.DishRequest;
+import com.riwi.MealMap.application.dtos.request.Ingredient.DrinkRequest;
+import com.riwi.MealMap.application.dtos.request.Ingredient.DrinkWithoutId;
+import com.riwi.MealMap.application.services.impl.DrinkService;
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.application.services.impl.DishService;
+import com.riwi.MealMap.domain.entities.Drink;
 import com.riwi.MealMap.domain.ports.service.IDishService;
+import com.riwi.MealMap.domain.ports.service.IDrinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,67 +21,68 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/dish")
-public class DishController implements IDishService {
+@RequestMapping("/drink")
+public class DrinkController implements IDrinkService {
 
     @Autowired
-    DishService dishService;
+    IDrinkService drinkService;
 
     @Autowired
     RestTemplate restTemplate;
 
     @Override
     @PostMapping("/create")
-    public ResponseEntity<Dish> createDTO(@RequestBody DishWithoutId dish) {
-        return dishService.createDTO(dish);
+    public ResponseEntity<Drink> createDTO(@RequestBody DrinkWithoutId drink) {
+        return drinkService.createDTO(drink);
     }
 
     @Override
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable Integer id) {
-        dishService.delete(id);
+        drinkService.delete(id);
     }
 
     @Override
     @GetMapping("/readAll")
-    public List<Dish> readAll() {
-        return dishService.readAll();
+    public List<Drink> readAll() {
+        return drinkService.readAll();
     }
 
     @Override
     @GetMapping("/readById/{id}")
-    public Optional<Dish> readById(@PathVariable Integer id) {
+    public Optional<Drink> readById(@PathVariable Integer id) {
         String url = "http://localhost:3000/orders";
         String response = restTemplate.getForObject(url, String.class);
         System.out.println(response);
 
-        Optional<Dish> dish = dishService.readById(id);
+        Optional<Drink> drink = drinkService.readById(id);
 
-        return ResponseEntity.ok(dish).getBody();
+        return ResponseEntity.ok(drink).getBody();
     }
 
     @Override
     @GetMapping("/readByName/{name}")
-    public ResponseEntity<Dish> readByName(@PathVariable String name) {
-        return dishService.readByName(name);
+    public ResponseEntity<Drink> readByName(@PathVariable String name) {
+        return drinkService.readByName(name);
     }
 
     @Override
     @PutMapping("/update/{id}")
-    public ResponseEntity<Dish> update(@PathVariable Integer id,@RequestBody Dish dish) {
-        return dishService.update(id, dish);
+    public ResponseEntity<Drink> update(@PathVariable Integer id,@RequestBody Drink drink) {
+        return drinkService.update(id, drink);
     }
 
     @Override
     @GetMapping("/available")
     @ResponseStatus(HttpStatus.OK)
-    public List<DishRequest> getAvailableDish() {
-        try{
-            return this.dishService.getAvailableDish();
-        } catch (Exception e){
-
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ERROR FOUND DISHES");
-        }
+    public List<DrinkRequest> getAvailableDrink() {
+        return this.drinkService.getAvailableDrink();
+//        try{
+//            return this.drinkService.getAvailableDrink();
+//        } catch (Exception e){
+//
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ERROR FOUND DRINKS");
+//        }
 
     }
 }

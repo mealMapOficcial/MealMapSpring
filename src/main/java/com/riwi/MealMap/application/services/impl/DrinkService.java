@@ -1,15 +1,9 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutId;
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishRequest;
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsOnlyWithName;
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.application.dtos.request.Ingredient.*;
 import com.riwi.MealMap.domain.entities.*;
-import com.riwi.MealMap.infrastructure.persistence.DishIngredientRepository;
-import com.riwi.MealMap.infrastructure.persistence.StockRepository;
-import com.riwi.MealMap.infrastructure.persistence.DishRepository;
-import com.riwi.MealMap.domain.ports.service.IDishService;
-import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
+import com.riwi.MealMap.domain.ports.service.IDrinkService;
+import com.riwi.MealMap.infrastructure.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,24 +16,24 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class DishService implements IDishService {
+public class DrinkService implements IDrinkService {
 
     @Autowired
-    DishIngredientRepository dishIngredientRepository;
+    DrinkIngredientRepository drinkIngredientRepository;
 
     @Autowired
     IngredientRepository ingredientRepository;
 
     @Autowired
-    DishRepository dishRepository;
+    DrinkRepository drinkRepository;
 
     @Autowired
     StockRepository stockRepository;
 
     @Override
-    public ResponseEntity<Dish> createDTO(DishWithoutId dishDTO) {
+    public ResponseEntity<Drink> createDTO(DrinkWithoutId drinkDTO) {
 
-        List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
+        List<IngredientsOnlyWithName> ingredientsRequest = drinkDTO.getIngredients();
         List<Ingredient> ingredientsList = new ArrayList<>();
 
         for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
@@ -56,78 +50,77 @@ public class DishService implements IDishService {
             throw new RuntimeException("No tienes los ingredientes suficientes para crear este plato.");
         }
 
-        Dish dish = Dish.builder()
-                .name(dishDTO.getName())
-                .price(dishDTO.getPrice())
-                .promotion(dishDTO.isPromotion())
-                .typeOfDishes(dishDTO.getTypeOfDishes())
+        Drink drink = Drink.builder()
+                .name(drinkDTO.getName())
+                .price(drinkDTO.getPrice())
+                .promotion(drinkDTO.isPromotion())
+                .typeOfDrinks(drinkDTO.getTypeOfDrinks())
                 .ingredients(ingredientsList)
                 .build();
 
-        Dish savedDish = dishRepository.save(dish);
+        Drink savedDrink = drinkRepository.save(drink);
 
         updateStock(ingredientsList);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedDish);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedDrink);
     }
 
 
     @Override
     public void delete(Integer id) {
-        dishRepository.deleteById(id);
+        drinkRepository.deleteById(id);
     }
 
     @Override
-    public List<Dish> readAll() {
-        return dishRepository.findAll();
+    public List<Drink> readAll() {
+        return drinkRepository.findAll();
     }
 
     @Override
-    public Optional<Dish> readById(Integer id) {
-        return dishRepository.findById(id);
+    public Optional<Drink> readById(Integer id) {
+        return drinkRepository.findById(id);
     }
 
     @Override
-    public ResponseEntity<Dish> readByName(String name) {
+    public ResponseEntity<Drink> readByName(String name) {
 
-        Optional<Dish> dish = dishRepository.findByName(name);
+        Optional<Drink> drink = drinkRepository.findByName(name);
 
-        if (dish.isPresent()) {
-            return ResponseEntity.ok(dish.get());
+        if (drink.isPresent()) {
+            return ResponseEntity.ok(drink.get());
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
-    public ResponseEntity<Dish> update(Integer id, Dish dish) {
-        Dish existingDish = dishRepository.findById(id).orElse(null);
+    public ResponseEntity<Drink> update(Integer id, Drink drink) {
+        Drink existingDrink = drinkRepository.findById(id).orElse(null);
 
-        if (existingDish != null) {
+        if (existingDrink != null) {
 
-            existingDish.setName(dish.getName());
-            existingDish.setPrice(dish.getPrice());
-            existingDish.setTypeOfDishes(dish.getTypeOfDishes());
-            existingDish.setIngredients(dish.getIngredients());
+            existingDrink.setName(drink.getName());
+            existingDrink.setPrice(drink.getPrice());
+            existingDrink.setTypeOfDrinks(drink.getTypeOfDrinks());
+            existingDrink.setIngredients(drink.getIngredients());
 
-            Dish savedDish = dishRepository.save(existingDish);
-            return ResponseEntity.ok(savedDish);
+            Drink savedDrink = drinkRepository.save(existingDrink);
+            return ResponseEntity.ok(savedDrink);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    private boolean isAvailable(Dish dish) {
-        return dish.getIngredients().stream()
+    private boolean isAvailable(Drink drink) {
+        return drink.getIngredients().stream()
                 .allMatch(ingredient -> {
-                    Optional<DishesIngredients> dishesIngredients =
-                            this.dishIngredientRepository.findByIngredientsIdAndDishesId(ingredient.getId(), dish.getId());
-
-                    if (dishesIngredients.isEmpty()) {
+                    Optional<DrinksIngredients> drinksIngredients =
+                            this.drinkIngredientRepository.findByIngredientsIdAndDrinksId(ingredient.getId(), drink.getId());
+                    if (drinksIngredients.isEmpty()) {
                         return false;
                     }
 
-                    Long quantity = dishesIngredients.get().getQuantity(); // Cambiado a Long
+                    Long quantity = drinksIngredients.get().getQuantity(); // Cambiado a Long
                     if (quantity == null) {
                         return false;
                     }
@@ -143,18 +136,18 @@ public class DishService implements IDishService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<DishRequest> getAvailableDish() {
-        List<DishRequest> availableDish = new ArrayList<>();
-        List<Dish> dishesEntity = this.dishRepository.findDishesWithIngredients();
+    public List<DrinkRequest> getAvailableDrink() {
+        List<DrinkRequest> availableDrink = new ArrayList<>();
+        List<Drink> drinksEntity = this.drinkRepository.findDrinksWithIngredients();
 
-        for (Dish dish : dishesEntity) {
-            if (isAvailable(dish)) {
-                DishRequest dishResponse = DishRequest.builder()
-                        .name(dish.getName())
-                        .price(dish.getPrice())
-                        .typeOfDishes(dish.getTypeOfDishes())
-                        .promotion(dish.isPromotion())
-                        .ingredients(dish.getIngredients() != null ? dish.getIngredients().stream()
+        for (Drink drink : drinksEntity) {
+            if (isAvailable(drink)) {
+                DrinkRequest drinkResponse = DrinkRequest.builder()
+                        .name(drink.getName())
+                        .price(drink.getPrice())
+                        .typeOfDrinks(drink.getTypeOfDrinks())
+                        .promotion(drink.isPromotion())
+                        .ingredients(drink.getIngredients() != null ? drink.getIngredients().stream()
                                 .map(ingredient -> IngredientsWithoutId.builder()
                                         .name(ingredient.getName())
                                         .price(ingredient.getPrice())
@@ -163,11 +156,11 @@ public class DishService implements IDishService {
                                 .collect(Collectors.toList()) : new ArrayList<>())
                         .build();
 
-                availableDish.add(dishResponse);
+                availableDrink.add(drinkResponse);
             }
         }
 
-        return availableDish;
+        return availableDrink;
     }
 
     private void updateStock(List<Ingredient> ingredientsList) {
@@ -190,6 +183,4 @@ public class DishService implements IDishService {
         }
         return true;
     }
-
-
 }
