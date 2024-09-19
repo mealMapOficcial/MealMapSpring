@@ -1,19 +1,20 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.application.dtos.exception.IngredientNotFoundException;
-import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutId;
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishRequest;
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsOnlyWithName;
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
-import com.riwi.MealMap.domain.entities.*;
+import com.riwi.MealMap.application.dtos.request.DishWithoutId;
+import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
+import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
+import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
+import com.riwi.MealMap.domain.entities.Dish;
+import com.riwi.MealMap.domain.entities.DishesIngredients;
+import com.riwi.MealMap.domain.entities.Ingredient;
+import com.riwi.MealMap.domain.entities.Stock;
 import com.riwi.MealMap.infrastructure.persistence.DishIngredientRepository;
 import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 import com.riwi.MealMap.infrastructure.persistence.DishRepository;
 import com.riwi.MealMap.domain.ports.service.IDishService;
 import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
 @Service
 public class DishService implements IDishService {
@@ -39,40 +42,70 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-    public ResponseEntity<Dish> createDTO(DishWithoutId dishDTO) {
+public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
-        List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
-        List<Ingredient> ingredientsList = new ArrayList<>();
+    Dish dish = Dish.builder()
+            .name(dishDTO.getName())
+            .price(dishDTO.getPrice())
+            .promotion(dishDTO.isPromotion())
+            .typeOfDishes(dishDTO.getTypeOfDishes())
+            .build();
 
-        for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+   
+    dish = this.dishRepository.save(dish);
 
-            Optional<Ingredient> optionalIngredient = this.ingredientRepository.findByName(requestIngredient.getName());
+    List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
+    List<Ingredient> ingredients = new ArrayList<>();
+    List<DishesIngredients> dishesIngredientsList = new ArrayList<>(); 
 
-            Ingredient ingredient = optionalIngredient.orElseThrow(() ->
-                    new IngredientNotFoundException("El ingrediente " + requestIngredient.getName() + " no existe."));
 
-            ingredientsList.add(ingredient);
-        }
+    for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
 
-        if (!hasEnoughStock(ingredientsList)) {
-            throw new InsufficientIngredientsException("No tienes los ingredientes suficientes para crear este plato.");
-        }
+        Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
+                .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
 
-        Dish dish = Dish.builder()
-                .name(dishDTO.getName())
-                .price(dishDTO.getPrice())
-                .promotion(dishDTO.isPromotion())
-                .typeOfDishes(dishDTO.getTypeOfDishes())
-                .ingredients(ingredientsList)
+        
+        validateStock(ingredient, requestIngredient.getQuantity());
+
+        
+        DishesIngredients dishesIngredients = DishesIngredients.builder()
+                .ingredients(ingredient)
+                .quantity(requestIngredient.getQuantity())
+                .dishes(dish)  
                 .build();
 
-        Dish savedDish = dishRepository.save(dish);
+        
+        dishesIngredientsList.add(dishesIngredients);
 
-        updateStock(ingredientsList);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedDish);
+        
+        ingredients.add(ingredient);
     }
 
+    this.dishIngredientRepository.saveAll(dishesIngredientsList);
+
+    dish.setIngredients(ingredients);
+
+    
+    return DishWithoutId.builder()
+            .price(dish.getPrice())
+            .promotion(dish.isPromotion())
+            .typeOfDishes(dish.getTypeOfDishes())
+    
+            .build();
+}
+
+
+
+    private  void validateStock(Ingredient ingrediente, double quantity){
+        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
+        if(stock.isPresent()){
+            if(stock.get().getAmount() < quantity){
+                throw new GenericNotFoundExceptions(("Not enought to create that dish" + ingrediente.getName()));
+            }
+        } else {
+            throw new GenericNotFoundExceptions(("Stock not found for ingredient" + ingrediente.getName()));
+        }
+    }
 
     @Override
     public void delete(Integer id) {
@@ -121,77 +154,59 @@ public class DishService implements IDishService {
 
     private boolean isAvailable(Dish dish) {
         return dish.getIngredients().stream()
-                .allMatch(ingredient -> {
+                .allMatch(ingredients -> {
                     Optional<DishesIngredients> dishesIngredients =
-                            this.dishIngredientRepository.findByIngredientsIdAndDishesId(ingredient.getId(), dish.getId());
-
+                            this.dishIngredientRepository.findByIngredientsIdAndDishesId(ingredients.getId(),
+                                    dish.getId());
                     if (dishesIngredients.isEmpty()) {
+
                         return false;
                     }
+                    double getQuantity = dishesIngredients.get().getQuantity();
 
-                    Long quantity = dishesIngredients.get().getQuantity(); // Cambiado a Long
-                    if (quantity == null) {
-                        return false;
-                    }
-
-                    Stock stock = this.stockRepository.findByIngredientId(ingredient.getId());
+                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
                     if (stock == null) {
                         return false;
                     }
-
-                    return stock.getAmount() >= quantity; // Asegúrate de que stock.getAmount() también sea Long
+                    return stock.getAmount() >= getQuantity;
                 });
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<DishRequest> getAvailableDish() {
-        List<DishRequest> availableDish = new ArrayList<>();
+    public List<DishWithoutIdAndWithDTO> getAvailableDish() {
+
         List<Dish> dishesEntity = this.dishRepository.findDishesWithIngredients();
 
-        for (Dish dish : dishesEntity) {
-            if (isAvailable(dish)) {
-                DishRequest dishResponse = DishRequest.builder()
-                        .name(dish.getName())
-                        .price(dish.getPrice())
-                        .typeOfDishes(dish.getTypeOfDishes())
-                        .promotion(dish.isPromotion())
-                        .ingredients(dish.getIngredients() != null ? dish.getIngredients().stream()
-                                .map(ingredient -> IngredientsWithoutId.builder()
+ return dishesEntity.stream()
+                .map(dish-> {
+                    DishWithoutIdAndWithDTO dishWithoutIdAndWithDTO = DishWithoutIdAndWithDTO.builder()
+                            .name(dish.getName())
+                            .price(dish.getPrice())
+                            .promotion(dish.isPromotion())
+                            .typeOfDishes(dish.getTypeOfDishes())
+                            .build();
+
+                    List<IngredientsWithoutId> ingredients = dish.getIngredients().stream()
+                            .map(ingredient -> {
+                                IngredientsWithoutId ingredientsWithoutId = IngredientsWithoutId.builder()
                                         .name(ingredient.getName())
-                                        .price(ingredient.getPrice())
                                         .measure(ingredient.getMeasure())
-                                        .build())
-                                .collect(Collectors.toList()) : new ArrayList<>())
-                        .build();
+                                        .build();
 
-                availableDish.add(dishResponse);
-            }
-        }
+                                return ingredientsWithoutId;
+                            })
 
-        return availableDish;
+                            .collect(Collectors.toList());
+
+                    dishWithoutIdAndWithDTO.setIngredients(ingredients);
+                    return dishWithoutIdAndWithDTO;
+                })
+
+                .collect(Collectors.toList());
     }
 
-    private void updateStock(List<Ingredient> ingredientsList) {
-        ingredientsList.forEach(ingredient -> {
-            Integer Idingredients = ingredient.getId();
-            Stock stock = stockRepository.findByIngredientId(Idingredients);
-            if (stock != null) {
-                stock.setAmount(stock.getAmount() - 1);
-                stockRepository.save(stock);
-            }
-        });
-    }
 
-    private boolean hasEnoughStock(List<Ingredient> ingredientsList) {
-        for (Ingredient ingredients : ingredientsList) {
-            Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-            if (stock == null || stock.getAmount() == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
 
 
 }

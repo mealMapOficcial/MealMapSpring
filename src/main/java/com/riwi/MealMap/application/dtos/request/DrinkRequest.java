@@ -1,6 +1,5 @@
-package com.riwi.MealMap.application.dtos.request.Ingredient;
+package com.riwi.MealMap.application.dtos.request;
 
-import com.riwi.MealMap.domain.enums.TypeOfDishes;
 import com.riwi.MealMap.domain.enums.TypeOfDrinks;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,13 +11,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DrinkWithoutId {
+public class DrinkRequest {
 
     @NotBlank(message = "Name is required")
     private String name;
@@ -35,5 +34,5 @@ public class DrinkWithoutId {
     private TypeOfDrinks typeOfDrinks;
 
     @NotNull(message = "Ingrediens is required")
-    private ArrayList<IngredientsOnlyWithName> ingredients;
+    private List<IngredientsWithoutId> ingredients;
 }

@@ -1,4 +1,4 @@
-package com.riwi.MealMap.application.dtos.request.Ingredient;
+package com.riwi.MealMap.application.dtos.request;
 
 import com.riwi.MealMap.domain.enums.TypeOfDishes;
 import jakarta.persistence.*;
@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DishRequest {
+public class DishWithoutIdAndWithDTO {
 
     @NotBlank(message = "Name is required")
     private String name;

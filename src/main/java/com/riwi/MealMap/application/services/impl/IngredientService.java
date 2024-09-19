@@ -1,6 +1,6 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
 import com.riwi.MealMap.domain.entities.Stock;
 import com.riwi.MealMap.domain.ports.service.IIngredientService;
@@ -56,7 +56,7 @@ public class IngredientService implements IIngredientService {
 
     @Override
     public ResponseEntity<Ingredient> readByName(String name) {
-        Optional<Ingredient> ingredient = ingredientRepository.findByName(name);
+        Optional<Ingredient> ingredient = ingredientRepository.findOneByName(name);
 
         if (ingredient.isPresent()) {
             return ResponseEntity.ok(ingredient.get());

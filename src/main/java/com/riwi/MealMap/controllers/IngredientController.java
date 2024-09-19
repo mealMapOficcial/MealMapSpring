@@ -1,6 +1,6 @@
 package com.riwi.MealMap.controllers;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
 import com.riwi.MealMap.application.services.impl.IngredientService;
 import com.riwi.MealMap.domain.ports.service.IIngredientService;

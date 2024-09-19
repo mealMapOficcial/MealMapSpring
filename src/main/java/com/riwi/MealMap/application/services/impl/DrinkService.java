@@ -1,6 +1,9 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.*;
+import com.riwi.MealMap.application.dtos.request.DrinkRequest;
+import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
+import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
+import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.*;
 import com.riwi.MealMap.domain.ports.service.IDrinkService;
 import com.riwi.MealMap.infrastructure.persistence.*;
@@ -38,7 +41,7 @@ public class DrinkService implements IDrinkService {
 
         for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
 
-            Optional<Ingredient> optionalIngredient = this.ingredientRepository.findByName(requestIngredient.getName());
+            Optional<Ingredient> optionalIngredient = this.ingredientRepository.findOneByName(requestIngredient.getName());
 
             Ingredient ingredient = optionalIngredient.orElseThrow(() ->
                     new RuntimeException("El ingrediente " + requestIngredient.getName() + " no existe."));
