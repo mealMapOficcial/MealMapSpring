@@ -1,7 +1,9 @@
 package com.riwi.MealMap.application.exceptions;
 
 import com.riwi.MealMap.application.dtos.exception.ExceptionBasic;
+import com.riwi.MealMap.application.dtos.exception.ExceptionResponse;
 import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
 @RestControllerAdvice
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
@@ -30,6 +34,27 @@ public class BadRequest {
                 .code(HttpStatus.BAD_REQUEST.value())
                 .status(HttpStatus.BAD_REQUEST.name())
                 .errors(errors)
+                .build();
+    }
+
+
+    @ExceptionHandler(GenericNotFoundExceptions.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ExceptionResponse handleIngredientNotFoundException(GenericNotFoundExceptions exception) {
+        return ExceptionResponse.builder()
+                .code(HttpStatus.NOT_FOUND.value())
+                .status(HttpStatus.NOT_FOUND.name())
+                .message(exception.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionResponse handleRuntimeException(RuntimeException exception) {
+        return ExceptionResponse.builder()
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                .message(exception.getMessage())
                 .build();
     }
 }

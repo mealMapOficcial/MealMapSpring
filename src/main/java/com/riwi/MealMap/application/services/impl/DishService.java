@@ -13,6 +13,7 @@ import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 import com.riwi.MealMap.infrastructure.persistence.DishRepository;
 import com.riwi.MealMap.domain.ports.service.IDishService;
 import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
 @Service
 public class DishService implements IDishService {
@@ -59,7 +62,7 @@ public class DishService implements IDishService {
                 validateStock(optionalIngredient.get(), requestIngredient.getQuantity());
                 ingredientsList.add(optionalIngredient.get());
             } else {
-                throw new RuntimeException(("ingredient no exist"));
+                throw new GenericNotFoundExceptions(("ingredient not found"));
             }
 
         }
@@ -80,6 +83,16 @@ public class DishService implements IDishService {
         return dishWithoutId;
     }
 
+    private  void validateStock(Ingredient ingrediente, float quantity){
+        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
+        if(stock.isPresent()){
+            if(stock.get().getAmount() < quantity){
+                throw new GenericNotFoundExceptions(("Not enought to create that dish" + ingrediente.getName()));
+            }
+        } else {
+            throw new GenericNotFoundExceptions(("Stock not found for ingredient" + ingrediente.getName()));
+        }
+    }
 
     @Override
     public void delete(Integer id) {
@@ -126,16 +139,7 @@ public class DishService implements IDishService {
         }
     }
 
-    private  void validateStock(Ingredient ingrediente, float quantity){
-        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
-        if(stock.isPresent()){
-            if(stock.get().getAmount() < quantity){
-                throw new RuntimeException(("Not enought to create that dish" + ingrediente.getName()));
-            }
-        } else {
-            throw new RuntimeException(("Stock not found for ingredient" + ingrediente.getName()));
-        }
-    }
+   
 
     private boolean isAvailable(Dish dish) {
         return dish.getIngredients().stream()
@@ -156,6 +160,10 @@ public class DishService implements IDishService {
                     return stock.getAmount() >= getQuantity;
                 });
     }
+
+
+
+    
 
     @Transactional(readOnly = true)
     @Override
@@ -186,26 +194,6 @@ public class DishService implements IDishService {
         return availableDish;
     }
 
-    private void updateStock(List<Ingredient> ingredientsList) {
-        ingredientsList.forEach(ingredient -> {
-            Integer Idingredients = ingredient.getId();
-            Stock stock = stockRepository.findByIngredientId(Idingredients);
-            if (stock != null) {
-                stock.setAmount(stock.getAmount() - 1);
-                stockRepository.save(stock);
-            }
-        });
-    }
-
-    private boolean hasEnoughStock(List<Ingredient> ingredientsList) {
-        for (Ingredient ingredients : ingredientsList) {
-            Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-            if (stock == null || stock.getAmount() == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
 
 
 

@@ -5,6 +5,12 @@ import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutIdAndWith
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.application.services.impl.DishService;
 import com.riwi.MealMap.domain.ports.service.IDishService;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.riwi.MealMap.application.dtos.exception.ExceptionResponse;
+import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
 
 @RestController
 @RequestMapping("/dish")
@@ -27,10 +36,19 @@ public class DishController  {
 
 
     @PostMapping("/create")
-    public ResponseEntity<DishWithoutId> create(@RequestBody DishWithoutId dish) {
-        DishWithoutId dishEntity = this.dishService.createGeneric(dish);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dishEntity);
-    }
+     @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Dish created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(schema = @Schema(implementation = ExceptionsResponse.class)))
+    })
+    public ResponseEntity<?> create(@RequestBody DishWithoutId dish) {
+        
+            DishWithoutId dishEntity = this.dishService.createGeneric(dish);
+            return ResponseEntity.status(HttpStatus.CREATED).body(dishEntity);
+           
+
+        }
+        
+    
 
 
     @DeleteMapping("/delete/{id}")
