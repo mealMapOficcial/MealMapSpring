@@ -46,9 +46,6 @@ public class DishController implements IDishService {
     @Override
     @GetMapping("/readById/{id}")
     public Optional<Dish> readById(@PathVariable Integer id) {
-        String url = "http://localhost:3000/orders";
-        String response = restTemplate.getForObject(url, String.class);
-        System.out.println(response);
 
         Optional<Dish> dish = dishService.readById(id);
 
