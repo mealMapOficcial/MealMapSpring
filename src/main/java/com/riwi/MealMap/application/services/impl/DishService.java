@@ -1,5 +1,7 @@
 package com.riwi.MealMap.application.services.impl;
 
+import com.riwi.MealMap.application.dtos.exception.IngredientNotFoundException;
+import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
 import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutId;
 import com.riwi.MealMap.application.dtos.request.Ingredient.DishRequest;
 import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsOnlyWithName;
@@ -47,13 +49,13 @@ public class DishService implements IDishService {
             Optional<Ingredient> optionalIngredient = this.ingredientRepository.findByName(requestIngredient.getName());
 
             Ingredient ingredient = optionalIngredient.orElseThrow(() ->
-                    new RuntimeException("El ingrediente " + requestIngredient.getName() + " no existe."));
+                    new IngredientNotFoundException("El ingrediente " + requestIngredient.getName() + " no existe."));
 
             ingredientsList.add(ingredient);
         }
 
         if (!hasEnoughStock(ingredientsList)) {
-            throw new RuntimeException("No tienes los ingredientes suficientes para crear este plato.");
+            throw new InsufficientIngredientsException("No tienes los ingredientes suficientes para crear este plato.");
         }
 
         Dish dish = Dish.builder()
