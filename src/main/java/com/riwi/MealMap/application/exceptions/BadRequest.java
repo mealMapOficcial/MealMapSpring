@@ -17,9 +17,21 @@ import java.util.List;
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
 @RestControllerAdvice
-@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+
 public class BadRequest {
+
+    @ExceptionHandler(GenericNotFoundExceptions.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ExceptionResponse handleIngredientNotFoundException(GenericNotFoundExceptions exception) {
+        return ExceptionResponse.builder()
+                .code(HttpStatus.NOT_FOUND.value())
+                .status(HttpStatus.NOT_FOUND.name())
+                .message(exception.getMessage())
+                .build();
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
         public ExceptionBasic badRequest(Exception exception){
 
         List<String> errors = new ArrayList<>();
@@ -38,23 +50,7 @@ public class BadRequest {
     }
 
 
-    @ExceptionHandler(GenericNotFoundExceptions.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionResponse handleIngredientNotFoundException(GenericNotFoundExceptions exception) {
-        return ExceptionResponse.builder()
-                .code(HttpStatus.NOT_FOUND.value())
-                .status(HttpStatus.NOT_FOUND.name())
-                .message(exception.getMessage())
-                .build();
-    }
+ 
 
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionResponse handleRuntimeException(RuntimeException exception) {
-        return ExceptionResponse.builder()
-                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                .message(exception.getMessage())
-                .build();
-    }
+   
 }

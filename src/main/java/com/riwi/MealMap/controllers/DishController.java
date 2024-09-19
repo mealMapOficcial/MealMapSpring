@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import com.riwi.MealMap.application.dtos.exception.ExceptionResponse;
 import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
+import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
 @RestController
 @RequestMapping("/dish")
@@ -93,7 +94,7 @@ public class DishController  {
             return this.dishService.getAvailableDish();
         } catch (Exception e){
 
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ERROR FOUND DISHES");
+            throw new GenericNotFoundExceptions( "ERROR FOUND DISHES");
         }
 
     }

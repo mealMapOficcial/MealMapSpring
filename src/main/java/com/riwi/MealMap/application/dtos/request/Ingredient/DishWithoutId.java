@@ -37,5 +37,6 @@ public class DishWithoutId {
 
     @NotNull(message = "Ingrediens is required")
     private ArrayList<IngredientsOnlyWithName> ingredients;
+    
 
 }

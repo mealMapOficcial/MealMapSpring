@@ -42,48 +42,61 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-    public DishWithoutId createGeneric(DishWithoutId dishDTO) {
+public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
-        Dish dish = Dish.builder()
-                .name(dishDTO.getName())
-                .price(dishDTO.getPrice())
-                .promotion(dishDTO.isPromotion())
-                .typeOfDishes(dishDTO.getTypeOfDishes())
+    Dish dish = Dish.builder()
+            .name(dishDTO.getName())
+            .price(dishDTO.getPrice())
+            .promotion(dishDTO.isPromotion())
+            .typeOfDishes(dishDTO.getTypeOfDishes())
+            .build();
+
+   
+    dish = this.dishRepository.save(dish);
+
+    List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
+    List<Ingredient> ingredients = new ArrayList<>();
+    List<DishesIngredients> dishesIngredientsList = new ArrayList<>(); 
+
+
+    for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+
+        Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
+                .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
+
+        
+        validateStock(ingredient, requestIngredient.getQuantity());
+
+        
+        DishesIngredients dishesIngredients = DishesIngredients.builder()
+                .ingredients(ingredient)
+                .quantity(requestIngredient.getQuantity())
+                .dishes(dish)  
                 .build();
 
-        List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
-        List<Ingredient> ingredientsList = new ArrayList<>();
+        
+        dishesIngredientsList.add(dishesIngredients);
 
-        for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
-
-            Optional<Ingredient> optionalIngredient = this.ingredientRepository.findOneByName(requestIngredient.getName());
-
-            if(optionalIngredient.isPresent()){
-                validateStock(optionalIngredient.get(), requestIngredient.getQuantity());
-                ingredientsList.add(optionalIngredient.get());
-            } else {
-                throw new GenericNotFoundExceptions(("ingredient not found"));
-            }
-
-        }
-
-    dish.setIngredients(ingredientsList);
-
-
-      this.dishRepository.save(dish);
-      DishWithoutId dishWithoutId = DishWithoutId.builder()
-              .name(dish.getName())
-              .price(dish.getPrice())
-              .promotion(dish.isPromotion())
-              .typeOfDishes(dish.getTypeOfDishes())
-              .build();
-
-
-
-        return dishWithoutId;
+        
+        ingredients.add(ingredient);
     }
 
-    private  void validateStock(Ingredient ingrediente, float quantity){
+    this.dishIngredientRepository.saveAll(dishesIngredientsList);
+
+    dish.setIngredients(ingredients);
+
+    
+    return DishWithoutId.builder()
+            .price(dish.getPrice())
+            .promotion(dish.isPromotion())
+            .typeOfDishes(dish.getTypeOfDishes())
+    
+            .build();
+}
+
+
+
+    private  void validateStock(Ingredient ingrediente, double quantity){
         Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
         if(stock.isPresent()){
             if(stock.get().getAmount() < quantity){
