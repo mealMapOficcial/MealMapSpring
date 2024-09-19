@@ -28,7 +28,8 @@ public class DishController implements IDishService {
     @Override
     @PostMapping("/create")
     public ResponseEntity<Dish> createDTO(@RequestBody DishWithoutId dish) {
-        return dishService.createDTO(dish);
+        Dish dishEntity = this.dishService.createDTO(dish);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dishEntity);
     }
 
     @Override

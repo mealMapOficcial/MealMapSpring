@@ -40,24 +40,24 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-    public ResponseEntity<Dish> createDTO(DishWithoutId dishDTO) {
+    public Dish createDTO(DishWithoutId dishDTO) {
 
         List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
         List<Ingredient> ingredientsList = new ArrayList<>();
 
         for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
 
-            Optional<Ingredient> optionalIngredient = this.ingredientRepository.findByName(requestIngredient.getName());
+            Optional<Ingredient> optionalIngredient = this.ingredientRepository.findOneByName(requestIngredient.getName());
 
-            Ingredient ingredient = optionalIngredient.orElseThrow(() ->
-                    new RuntimeException("El ingrediente " + requestIngredient.getName() + " no existe."));
+            if(optionalIngredient.isPresent()){
+                validateStock(optionalIngredient.get(), requestIngredient.getQuantity());
+                ingredientsList.add(optionalIngredient.get());
+            } else {
+                throw new RuntimeException(("ingredient no exist"));
+            }
 
-            ingredientsList.add(ingredient);
         }
 
-        if (!hasEnoughStock(ingredientsList)) {
-            throw new RuntimeException("No tienes los ingredientes suficientes para crear este plato.");
-        }
 
         Dish dish = Dish.builder()
                 .name(dishDTO.getName())
@@ -69,9 +69,9 @@ public class DishService implements IDishService {
 
         Dish savedDish = dishRepository.save(dish);
 
-        updateStock(ingredientsList);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedDish);
+
+        return dish;
     }
 
 
@@ -117,6 +117,17 @@ public class DishService implements IDishService {
             return ResponseEntity.ok(savedDish);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    private  void validateStock(Ingredient ingrediente, float quantity){
+        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
+        if(stock.isPresent()){
+            if(stock.get().getAmount() < quantity){
+                throw new RuntimeException(("Not enought to create that dish" + ingrediente.getName()));
+            }
+        } else {
+            throw new RuntimeException(("Stock not found for ingredient" + ingrediente.getName()));
         }
     }
 

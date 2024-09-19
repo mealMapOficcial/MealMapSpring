@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class IngredientsOnlyWithName {
     @NotNull
     private String name;
+    private String measure;
+    private float quantity;
 }
