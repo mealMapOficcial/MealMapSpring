@@ -43,7 +43,7 @@ public class IngredientService implements IIngredientService {
 
     @Override
     public ResponseEntity<Ingredient> readByName(String name) {
-        Optional<Ingredient> ingredient = ingredientRepository.findByName(name);
+        Optional<Ingredient> ingredient = ingredientRepository.findOneByName(name);
 
         if (ingredient.isPresent()) {
             return ResponseEntity.ok(ingredient.get());

@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/dish")
-public class DishController implements IDishService {
+public class DishController  {
 
     @Autowired
     DishService dishService;
@@ -25,26 +25,26 @@ public class DishController implements IDishService {
     @Autowired
     RestTemplate restTemplate;
 
-    @Override
+
     @PostMapping("/create")
-    public ResponseEntity<Dish> createDTO(@RequestBody DishWithoutId dish) {
-        Dish dishEntity = this.dishService.createDTO(dish);
+    public ResponseEntity<DishWithoutId> create(@RequestBody DishWithoutId dish) {
+        DishWithoutId dishEntity = this.dishService.createGeneric(dish);
         return ResponseEntity.status(HttpStatus.CREATED).body(dishEntity);
     }
 
-    @Override
+
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable Integer id) {
         dishService.delete(id);
     }
 
-    @Override
+
     @GetMapping("/readAll")
     public List<Dish> readAll() {
         return dishService.readAll();
     }
 
-    @Override
+
     @GetMapping("/readById/{id}")
     public Optional<Dish> readById(@PathVariable Integer id) {
         String url = "http://localhost:3000/orders";
@@ -56,19 +56,18 @@ public class DishController implements IDishService {
         return ResponseEntity.ok(dish).getBody();
     }
 
-    @Override
+
     @GetMapping("/readByName/{name}")
     public ResponseEntity<Dish> readByName(@PathVariable String name) {
         return dishService.readByName(name);
     }
 
-    @Override
     @PutMapping("/update/{id}")
     public ResponseEntity<Dish> update(@PathVariable Integer id,@RequestBody Dish dish) {
         return dishService.update(id, dish);
     }
 
-    @Override
+
     @GetMapping("/available")
     @ResponseStatus(HttpStatus.OK)
     public List<DishWithoutIdAndWithDTO> getAvailableDish() {

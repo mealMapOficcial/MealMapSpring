@@ -14,7 +14,6 @@ import com.riwi.MealMap.infrastructure.persistence.DishRepository;
 import com.riwi.MealMap.domain.ports.service.IDishService;
 import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +39,14 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-    public Dish createDTO(DishWithoutId dishDTO) {
+    public DishWithoutId createGeneric(DishWithoutId dishDTO) {
+
+        Dish dish = Dish.builder()
+                .name(dishDTO.getName())
+                .price(dishDTO.getPrice())
+                .promotion(dishDTO.isPromotion())
+                .typeOfDishes(dishDTO.getTypeOfDishes())
+                .build();
 
         List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
         List<Ingredient> ingredientsList = new ArrayList<>();
@@ -58,20 +64,20 @@ public class DishService implements IDishService {
 
         }
 
-
-        Dish dish = Dish.builder()
-                .name(dishDTO.getName())
-                .price(dishDTO.getPrice())
-                .promotion(dishDTO.isPromotion())
-                .typeOfDishes(dishDTO.getTypeOfDishes())
-                .ingredients(ingredientsList)
-                .build();
-
-        Dish savedDish = dishRepository.save(dish);
+    dish.setIngredients(ingredientsList);
 
 
+      this.dishRepository.save(dish);
+      DishWithoutId dishWithoutId = DishWithoutId.builder()
+              .name(dish.getName())
+              .price(dish.getPrice())
+              .promotion(dish.isPromotion())
+              .typeOfDishes(dish.getTypeOfDishes())
+              .build();
 
-        return dish;
+
+
+        return dishWithoutId;
     }
 
 
@@ -200,6 +206,7 @@ public class DishService implements IDishService {
         }
         return true;
     }
+
 
 
 }

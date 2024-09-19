@@ -6,7 +6,7 @@ import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutIdAndWith
 import com.riwi.MealMap.domain.entities.Dish;
 
 public interface IDishService extends
-        CreateDTO<DishWithoutId, Dish>,
+        CreateGeneric<DishWithoutId>,
         ReadByName<Dish, String>,
         ReadAll<Dish>,
         ReadById<Dish, Integer>,
