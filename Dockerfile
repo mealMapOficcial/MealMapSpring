@@ -6,8 +6,8 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17-jdk-slim
 
-COPY --from=build /target/template-0.0.1.jar template-docker.jar
+COPY --from=build /target/MealMap-0.0.1.jar meal-map.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "template-docker.jar"]
+ENTRYPOINT ["java", "-jar", "meal-map.jar"]
