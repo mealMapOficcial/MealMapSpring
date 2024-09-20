@@ -1,5 +1,7 @@
 package com.riwi.MealMap.application.services.impl;
 
+import com.riwi.MealMap.application.dtos.exception.IngredientNotFoundException;
+import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
 import com.riwi.MealMap.application.dtos.request.DrinkRequest;
 import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
 import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
@@ -40,17 +42,16 @@ public class DrinkService implements IDrinkService {
         List<Ingredient> ingredientsList = new ArrayList<>();
 
         for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
-
             Optional<Ingredient> optionalIngredient = this.ingredientRepository.findOneByName(requestIngredient.getName());
 
             Ingredient ingredient = optionalIngredient.orElseThrow(() ->
-                    new RuntimeException("El ingrediente " + requestIngredient.getName() + " no existe."));
+                    new IngredientNotFoundException("El ingrediente " + requestIngredient.getName() + " no existe."));
 
             ingredientsList.add(ingredient);
         }
 
         if (!hasEnoughStock(ingredientsList)) {
-            throw new RuntimeException("No tienes los ingredientes suficientes para crear este plato.");
+            throw new InsufficientIngredientsException("No tienes los ingredientes suficientes para crear este plato.");
         }
 
         Drink drink = Drink.builder()
@@ -67,7 +68,6 @@ public class DrinkService implements IDrinkService {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDrink);
     }
-
 
     @Override
     public void delete(Integer id) {
@@ -123,7 +123,7 @@ public class DrinkService implements IDrinkService {
                         return false;
                     }
 
-                    Long quantity = drinksIngredients.get().getQuantity(); // Cambiado a Long
+                    Long quantity = drinksIngredients.get().getQuantity();
                     if (quantity == null) {
                         return false;
                     }
@@ -133,7 +133,7 @@ public class DrinkService implements IDrinkService {
                         return false;
                     }
 
-                    return stock.getAmount() >= quantity; // Asegúrate de que stock.getAmount() también sea Long
+                    return stock.getAmount() >= quantity;
                 });
     }
 
@@ -180,7 +180,7 @@ public class DrinkService implements IDrinkService {
     private boolean hasEnoughStock(List<Ingredient> ingredientsList) {
         for (Ingredient ingredients : ingredientsList) {
             Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-            if (stock == null || stock.getAmount() == 0) {
+            if (stock == null) {
                 return false;
             }
         }

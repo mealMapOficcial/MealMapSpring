@@ -36,7 +36,7 @@ public class IngredientService implements IIngredientService {
 
         Stock stock = Stock.builder()
                 .ingredients(savedIngredient)
-                .amount(100)
+                .amount(10)
                 .build();
 
         stockRepository.save(stock);

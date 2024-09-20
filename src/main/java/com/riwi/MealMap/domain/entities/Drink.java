@@ -29,10 +29,6 @@ public class Drink {
     @Column(nullable = false)
     private Float price;
 
-    @PrePersist
-    public void prePersist() {
-        promotion = false;
-    }
     @Column(nullable = false)
     private boolean promotion;
 

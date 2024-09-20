@@ -4,6 +4,7 @@ import com.riwi.MealMap.application.dtos.request.DrinkRequest;
 import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
 import com.riwi.MealMap.domain.entities.Drink;
 import com.riwi.MealMap.domain.ports.service.IDrinkService;
+import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,12 +71,6 @@ public class DrinkController implements IDrinkService {
     @ResponseStatus(HttpStatus.OK)
     public List<DrinkRequest> getAvailableDrink() {
         return this.drinkService.getAvailableDrink();
-//        try{
-//            return this.drinkService.getAvailableDrink();
-//        } catch (Exception e){
-//
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ERROR FOUND DRINKS");
-//        }
 
     }
 }
