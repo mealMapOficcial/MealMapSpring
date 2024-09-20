@@ -22,8 +22,5 @@ public class TableWithoutId {
     @NotNull
     private Boolean disponibility;
 
-    @NotNull
-    private Floor floor;
-
     private boolean isAvailable;
 }
