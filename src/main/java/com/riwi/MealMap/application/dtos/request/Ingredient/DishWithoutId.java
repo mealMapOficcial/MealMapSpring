@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -28,7 +27,7 @@ public class DishWithoutId {
     @Positive(message = "Price must be positive")
     private Float price;
 
-    @NotNull
+    @NotNull(message = "required")
     private boolean promotion;
 
     @NotNull(message = "TypeDishes is required")
@@ -36,7 +35,9 @@ public class DishWithoutId {
     private TypeOfDishes typeOfDishes;
 
     @NotNull(message = "Ingrediens is required")
-    private ArrayList<IngredientsOnlyWithName> ingredients;
+    private List<IngredientsOnlyWithName> ingredients;
+
+   
     
 
 }

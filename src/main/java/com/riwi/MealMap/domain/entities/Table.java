@@ -20,10 +20,6 @@ public class Table {
     @Column(nullable = false)
     private Boolean disponibility;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Floor floor;
-
     public boolean isAvailable() {
         this.disponibility = !this.disponibility;
         return false;
