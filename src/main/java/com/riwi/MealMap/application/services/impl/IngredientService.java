@@ -1,8 +1,7 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.dtos.request.IngredientsWithoutId;
+import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
-import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
 import com.riwi.MealMap.domain.ports.service.IIngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,20 +15,20 @@ import java.util.Optional;
 public class IngredientService implements IIngredientService {
 
     @Autowired
-    IngredientRepository ingredientRepository;
+    com.riwi.MealMap.infrastructure.persistence.IngredientRepository ingredientRepository;
 
     @Override
-    public ResponseEntity<Ingredient> create(IngredientsWithoutId ingredientDTO) {
+    public ResponseEntity<Ingredient> createDTO(IngredientsWithoutId ingredientDTO) {
 
         Ingredient ingredient = Ingredient.builder()
                 .name(ingredientDTO.getName())
                 .price(ingredientDTO.getPrice())
-                .weight(ingredientDTO.getWeight())
+                .measure(ingredientDTO.getMeasure())
                 .build();
 
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
-        return ResponseEntity.status(HttpStatus.OK).body(savedIngredient);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedIngredient);
     }
 
     @Override
@@ -44,8 +43,7 @@ public class IngredientService implements IIngredientService {
 
     @Override
     public ResponseEntity<Ingredient> readByName(String name) {
-
-        Optional<Ingredient> ingredient = ingredientRepository.findByName(name);
+        Optional<Ingredient> ingredient = ingredientRepository.findOneByName(name);
 
         if (ingredient.isPresent()) {
             return ResponseEntity.ok(ingredient.get());
@@ -67,7 +65,7 @@ public class IngredientService implements IIngredientService {
 
             existingIngredient.setName(ingredient.getName());
             existingIngredient.setPrice(ingredient.getPrice());
-            existingIngredient.setWeight(ingredient.getWeight());
+            existingIngredient.setMeasure(ingredient.getMeasure());
 
             Ingredient savedIngredient = ingredientRepository.save(existingIngredient);
             return ResponseEntity.ok(savedIngredient);

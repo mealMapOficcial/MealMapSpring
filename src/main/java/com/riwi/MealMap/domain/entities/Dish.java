@@ -1,28 +1,37 @@
 package com.riwi.MealMap.domain.entities;
 
+import com.riwi.MealMap.domain.enums.TypeOfDishes;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
-@Entity(name = "dishes")
+@Entity
+@Table(name = "dishes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Dish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idDish;
+    private Integer id;
 
     @Column(nullable = false)
-    private String nameOfDish;
+    private String name;
 
     @Column(nullable = false)
-    private Double priceOfDish;
+    private Float price;
 
+    @PrePersist
+    public void prePersist() {
+        promotion = false;
     @OneToMany
     @JoinColumn(nullable = false)
     private List<IngredientsByDish> ingredientsByDish;
@@ -32,8 +41,17 @@ public class Dish {
                 .mapToDouble(ingredientByDish -> ingredientByDish.getIngredient().getPrice())
                 .sum();
     }
+    @Column(nullable = false,columnDefinition="TINYINT()")
+    private boolean promotion;
 
-    //@ManyToOne
-    //@JoinColumn(nullable = false)
-    //private TypeOfDish typeOfDish;
+    @Enumerated(EnumType.STRING)
+    private TypeOfDishes typeOfDishes;
+
+    @ManyToMany
+    @JoinTable(
+            name = "dishes_ingredients",
+            joinColumns = @JoinColumn(name = "dishes_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredients_id")
+    )
+    private List<Ingredient> ingredients;
 }

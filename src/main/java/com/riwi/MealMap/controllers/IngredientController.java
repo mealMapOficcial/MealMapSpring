@@ -1,9 +1,9 @@
 package com.riwi.MealMap.controllers;
 
-import com.riwi.MealMap.controllers.interfaces.IIngredientController;
-import com.riwi.MealMap.dtos.request.IngredientsWithoutId;
+import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
 import com.riwi.MealMap.application.services.impl.IngredientService;
+import com.riwi.MealMap.domain.ports.service.IIngredientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/ingredients")
-public class IngredientController implements IIngredientController {
+public class IngredientController implements IIngredientService {
 
     @Autowired
     IngredientService ingredientService;
@@ -23,10 +23,10 @@ public class IngredientController implements IIngredientController {
     @Autowired
     RestTemplate restTemplate;
 
-    @Override
     @PostMapping("/create")
-    public ResponseEntity<Ingredient> create (@Valid @RequestBody IngredientsWithoutId ingredient) {
-        return ingredientService.create(ingredient);
+    @Override
+    public ResponseEntity<Ingredient> createDTO(@Valid @RequestBody IngredientsWithoutId ingredient) {
+        return ingredientService.createDTO(ingredient);
     }
 
     @Override
@@ -47,7 +47,10 @@ public class IngredientController implements IIngredientController {
         String url = "http://localhost:3000/orders";
         String response = restTemplate.getForObject(url, String.class);
         System.out.println(response);
-        return ingredientService.readById(id);
+
+        Optional<Ingredient> ingredient = ingredientService.readById(id);
+
+        return ResponseEntity.ok(ingredient).getBody();
     }
 
     @Override

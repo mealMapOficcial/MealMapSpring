@@ -1,12 +1,14 @@
 package com.riwi.MealMap.domain.entities;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "ingredients")
+@Entity
+@Table(name = "ingredients")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,5 +25,5 @@ public class Ingredient {
     private Double price;
 
     @Column(nullable = false)
-    private String weight;
+    private String measure;
 }
