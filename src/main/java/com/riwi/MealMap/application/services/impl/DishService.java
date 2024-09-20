@@ -16,7 +16,6 @@ import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutId;
 import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutIdAndWithDTO;
 import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsOnlyWithName;
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.domain.entities.DishesIngredients;
 import com.riwi.MealMap.domain.entities.Ingredient;
