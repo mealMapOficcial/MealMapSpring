@@ -1,33 +1,35 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.application.dtos.request.DishWithoutId;
-import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
-import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
-import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
-import com.riwi.MealMap.domain.entities.Dish;
-import com.riwi.MealMap.domain.entities.DishesIngredients;
-import com.riwi.MealMap.domain.entities.Ingredient;
-import com.riwi.MealMap.domain.entities.Stock;
-import com.riwi.MealMap.infrastructure.persistence.DishIngredientRepository;
-import com.riwi.MealMap.infrastructure.persistence.StockRepository;
-import com.riwi.MealMap.infrastructure.persistence.DishRepository;
-import com.riwi.MealMap.domain.ports.service.IDishService;
-import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.riwi.MealMap.application.dtos.request.DishWithoutId;
+import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
+import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
+import com.riwi.MealMap.domain.entities.Dish;
+import com.riwi.MealMap.domain.entities.DishesIngredients;
+import com.riwi.MealMap.domain.entities.Ingredient;
+import com.riwi.MealMap.domain.entities.Stock;
+import com.riwi.MealMap.domain.ports.service.IDishService;
+import com.riwi.MealMap.infrastructure.persistence.DishIngredientRepository;
+import com.riwi.MealMap.infrastructure.persistence.DishRepository;
+import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
+import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 
 @Service
 public class DishService implements IDishService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DishService.class);
 
     @Autowired
     DishIngredientRepository dishIngredientRepository;
@@ -49,10 +51,11 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
             .price(dishDTO.getPrice())
             .promotion(dishDTO.isPromotion())
             .typeOfDishes(dishDTO.getTypeOfDishes())
-            .build();
+            .build(); 
 
    
     dish = this.dishRepository.save(dish);
+   
 
     List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
     List<Ingredient> ingredients = new ArrayList<>();
@@ -85,11 +88,20 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
     dish.setIngredients(ingredients);
 
+    List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
+    .map(ingredient -> IngredientsOnlyWithName.builder()
+            .name(ingredient.getName())
+            .measure(ingredient.getMeasure())
+            .build())
+    .collect(Collectors.toList());
+
     
     return DishWithoutId.builder()
+            .name(dish.getName())
             .price(dish.getPrice())
             .promotion(dish.isPromotion())
             .typeOfDishes(dish.getTypeOfDishes())
+            .ingredients(ingredientsDish)
     
             .build();
 }
@@ -152,6 +164,8 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
         }
     }
 
+   
+
     private boolean isAvailable(Dish dish) {
         return dish.getIngredients().stream()
                 .allMatch(ingredients -> {
@@ -172,41 +186,45 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
                 });
     }
 
+
+
+    
+
     @Transactional(readOnly = true)
     @Override
     public List<DishWithoutIdAndWithDTO> getAvailableDish() {
-
+        
         List<Dish> dishesEntity = this.dishRepository.findDishesWithIngredients();
 
- return dishesEntity.stream()
-                .map(dish-> {
-                    DishWithoutIdAndWithDTO dishWithoutIdAndWithDTO = DishWithoutIdAndWithDTO.builder()
-                            .name(dish.getName())
-                            .price(dish.getPrice())
-                            .promotion(dish.isPromotion())
-                            .typeOfDishes(dish.getTypeOfDishes())
-                            .build();
+        return dishesEntity.stream()
+        .map(dish-> {
+            DishWithoutIdAndWithDTO dishWithoutIdAndWithDTO = DishWithoutIdAndWithDTO.builder()
+            .name(dish.getName())
+            .price(dish.getPrice())
+            .promotion(dish.isPromotion())
+            .typeOfDishes(dish.getTypeOfDishes())
+            .build();
 
-                    List<IngredientsWithoutId> ingredients = dish.getIngredients().stream()
-                            .map(ingredient -> {
-                                IngredientsWithoutId ingredientsWithoutId = IngredientsWithoutId.builder()
-                                        .name(ingredient.getName())
-                                        .measure(ingredient.getMeasure())
-                                        .build();
+            List<IngredientsOnlyWithName> ingredients = dish.getIngredients().stream()
+            .map(ingredient -> {
+                IngredientsOnlyWithName ingredientsWithoutId = IngredientsOnlyWithName.builder()
+                .name(ingredient.getName())
+                .measure(ingredient.getMeasure())
+                .build();
 
-                                return ingredientsWithoutId;
-                            })
+                return ingredientsWithoutId;
+            })
 
-                            .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
-                    dishWithoutIdAndWithDTO.setIngredients(ingredients);
-                    return dishWithoutIdAndWithDTO;
-                })
+            dishWithoutIdAndWithDTO.setIngredients(ingredients);
+            return dishWithoutIdAndWithDTO;
+        })
 
-                .collect(Collectors.toList());
+        .collect(Collectors.toList());
     }
-
-
-
-
 }
+
+
+
+

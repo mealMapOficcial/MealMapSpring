@@ -33,6 +33,6 @@ public class DishWithoutIdAndWithDTO {
     private TypeOfDishes typeOfDishes;
 
     @NotNull(message = "Ingrediens is required")
-    private List<IngredientsWithoutId> ingredients;
+    private List<IngredientsOnlyWithName> ingredients;
 
 }

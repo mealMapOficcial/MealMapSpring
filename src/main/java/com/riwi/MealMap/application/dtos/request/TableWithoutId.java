@@ -1,6 +1,5 @@
 package com.riwi.MealMap.application.dtos.request;
 
-import com.riwi.MealMap.domain.entities.Floor;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +17,6 @@ public class TableWithoutId {
 
     @NotNull
     private Boolean disponibility;
-
-    @NotNull
-    private Floor floor;
 
     private boolean isAvailable;
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DrinkRequest {
+public class DrinkWithoutIdAndWithDTO {
 
     @NotBlank(message = "Name is required")
     private String name;
@@ -34,5 +34,5 @@ public class DrinkRequest {
     private TypeOfDrinks typeOfDrinks;
 
     @NotNull(message = "Ingrediens is required")
-    private List<IngredientsWithoutId> ingredients;
+    private List<IngredientsOnlyWithName> ingredients;
 }

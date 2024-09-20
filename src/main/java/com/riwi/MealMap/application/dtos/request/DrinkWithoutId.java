@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -34,5 +35,5 @@ public class DrinkWithoutId {
     private TypeOfDrinks typeOfDrinks;
 
     @NotNull(message = "Ingrediens is required")
-    private ArrayList<IngredientsOnlyWithName> ingredients;
+    private List<IngredientsOnlyWithName> ingredients;
 }
