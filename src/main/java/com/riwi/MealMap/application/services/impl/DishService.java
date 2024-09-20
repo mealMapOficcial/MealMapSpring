@@ -102,6 +102,7 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
             .promotion(dish.isPromotion())
             .typeOfDishes(dish.getTypeOfDishes())
             .ingredients(ingredientsDish)
+            
     
             .build();
 }
