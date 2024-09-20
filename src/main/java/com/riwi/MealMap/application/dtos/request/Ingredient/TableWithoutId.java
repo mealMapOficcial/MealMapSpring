@@ -1,6 +1,6 @@
 package com.riwi.MealMap.application.dtos.request.Ingredient;
 
-import com.riwi.MealMap.domain.entities.Floor;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
