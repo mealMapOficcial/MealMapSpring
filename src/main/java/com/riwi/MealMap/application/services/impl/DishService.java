@@ -7,15 +7,16 @@ import java.util.stream.Collectors;
 
 import com.riwi.MealMap.application.dtos.request.DishWithoutId;
 import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
+import com.riwi.MealMap.application.dtos.request.DishwhitIngredientsName;
 import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
+import com.riwi.MealMap.application.dtos.request.IngredientsWithName;
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.domain.entities.DishesIngredients;
 import com.riwi.MealMap.domain.entities.Ingredient;
@@ -29,7 +30,6 @@ import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 @Service
 public class DishService implements IDishService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DishService.class);
 
     @Autowired
     DishIngredientRepository dishIngredientRepository;
@@ -44,7 +44,7 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-public DishWithoutId createGeneric(DishWithoutId dishDTO) {
+public DishwhitIngredientsName createGeneric(DishWithoutId dishDTO) {
 
     Dish dish = Dish.builder()
             .name(dishDTO.getName())
@@ -88,22 +88,21 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
     dish.setIngredients(ingredients);
 
-    List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
-    .map(ingredient -> IngredientsOnlyWithName.builder()
+    List<IngredientsWithName> ingredientsDish = ingredients.stream()
+    .map(ingredient -> IngredientsWithName.builder()
             .name(ingredient.getName())
-            .measure(ingredient.getMeasure())
             .build())
     .collect(Collectors.toList());
 
     
-    return DishWithoutId.builder()
+    return DishwhitIngredientsName.builder()
             .name(dish.getName())
             .price(dish.getPrice())
             .promotion(dish.isPromotion())
             .typeOfDishes(dish.getTypeOfDishes())
             .ingredients(ingredientsDish)
             
-    
+
             .build();
 }
 
@@ -167,25 +166,7 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
    
 
-    private boolean isAvailable(Dish dish) {
-        return dish.getIngredients().stream()
-                .allMatch(ingredients -> {
-                    Optional<DishesIngredients> dishesIngredients =
-                            this.dishIngredientRepository.findByIngredientsIdAndDishesId(ingredients.getId(),
-                                    dish.getId());
-                    if (dishesIngredients.isEmpty()) {
-
-                        return false;
-                    }
-                    double getQuantity = dishesIngredients.get().getQuantity();
-
-                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-                    if (stock == null) {
-                        return false;
-                    }
-                    return stock.getAmount() >= getQuantity;
-                });
-    }
+   
 
 
 
@@ -210,7 +191,6 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
             .map(ingredient -> {
                 IngredientsOnlyWithName ingredientsWithoutId = IngredientsOnlyWithName.builder()
                 .name(ingredient.getName())
-                .measure(ingredient.getMeasure())
                 .build();
 
                 return ingredientsWithoutId;
@@ -224,6 +204,8 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
         .collect(Collectors.toList());
     }
+
+    
 }
 
 
