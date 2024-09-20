@@ -1,12 +1,11 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.TableWithoutId;
+import com.riwi.MealMap.application.dtos.request.TableWithoutId;
 import com.riwi.MealMap.domain.entities.Table;
 import com.riwi.MealMap.domain.ports.service.ITableService;
 import com.riwi.MealMap.infrastructure.persistence.TableRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 

@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.riwi.MealMap.application.dtos.request.DishWithoutId;
+import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
+import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutId;
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutIdAndWithDTO;
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsOnlyWithName;
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.domain.entities.DishesIngredients;
 import com.riwi.MealMap.domain.entities.Ingredient;

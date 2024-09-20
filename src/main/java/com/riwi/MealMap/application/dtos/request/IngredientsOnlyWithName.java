@@ -1,6 +1,5 @@
-package com.riwi.MealMap.application.dtos.request.Ingredient;
+package com.riwi.MealMap.application.dtos.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,13 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IngredientsWithoutId {
-
+public class IngredientsOnlyWithName {
     @NotNull
     private String name;
-
-    private Float price;
-
-    @NotNull
     private String measure;
+    private double  quantity;
 }

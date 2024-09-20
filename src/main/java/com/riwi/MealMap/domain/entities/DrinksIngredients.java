@@ -11,16 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "DishesIngredients")
-@Table(name = "dishes_ingredients", schema = "meal_map", catalog = "meal_map")
-public class DishesIngredients {
+@Entity(name = "DrinksIngredients")
+@Table(name = "drinks_ingredients", schema = "meal_map", catalog = "meal_map")
+public class DrinksIngredients {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "dishes_id")
-    private Dish dishes;
+    @JoinColumn(name = "drinks_id")
+    private Drink drinks;
 
     @ManyToOne
     @JoinColumn(name = "ingredients_id")

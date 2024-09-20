@@ -1,9 +1,5 @@
-package com.riwi.MealMap.application.dtos.request.Ingredient;
+package com.riwi.MealMap.application.dtos.request;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
