@@ -1,6 +1,6 @@
 package com.riwi.MealMap.controllers;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
 import com.riwi.MealMap.application.services.impl.IngredientService;
 import com.riwi.MealMap.domain.ports.service.IIngredientService;
@@ -44,9 +44,6 @@ public class IngredientController implements IIngredientService {
     @Override
     @GetMapping("/readById/{id}")
     public Optional<Ingredient> readById(@PathVariable Integer id) {
-        String url = "http://localhost:3000/orders";
-        String response = restTemplate.getForObject(url, String.class);
-        System.out.println(response);
 
         Optional<Ingredient> ingredient = ingredientService.readById(id);
 

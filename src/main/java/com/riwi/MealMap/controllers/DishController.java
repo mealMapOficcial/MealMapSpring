@@ -1,10 +1,9 @@
 package com.riwi.MealMap.controllers;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutId;
-import com.riwi.MealMap.application.dtos.request.Ingredient.DishWithoutIdAndWithDTO;
+import com.riwi.MealMap.application.dtos.request.DishWithoutId;
+import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.application.services.impl.DishService;
-import com.riwi.MealMap.domain.ports.service.IDishService;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,12 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.riwi.MealMap.application.dtos.exception.ExceptionResponse;
 import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
@@ -66,9 +63,6 @@ public class DishController  {
 
     @GetMapping("/readById/{id}")
     public Optional<Dish> readById(@PathVariable Integer id) {
-        String url = "http://localhost:3000/orders";
-        String response = restTemplate.getForObject(url, String.class);
-        System.out.println(response);
 
         Optional<Dish> dish = dishService.readById(id);
 

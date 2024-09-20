@@ -1,8 +1,11 @@
 package com.riwi.MealMap.application.services.impl;
 
-import com.riwi.MealMap.application.dtos.request.Ingredient.IngredientsWithoutId;
+import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
+import com.riwi.MealMap.domain.entities.Stock;
 import com.riwi.MealMap.domain.ports.service.IIngredientService;
+import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
+import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +18,10 @@ import java.util.Optional;
 public class IngredientService implements IIngredientService {
 
     @Autowired
-    com.riwi.MealMap.infrastructure.persistence.IngredientRepository ingredientRepository;
+    IngredientRepository ingredientRepository;
+
+    @Autowired
+    StockRepository stockRepository;
 
     @Override
     public ResponseEntity<Ingredient> createDTO(IngredientsWithoutId ingredientDTO) {
@@ -27,6 +33,13 @@ public class IngredientService implements IIngredientService {
                 .build();
 
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
+
+        Stock stock = Stock.builder()
+                .ingredients(savedIngredient)
+                .amount(10)
+                .build();
+
+        stockRepository.save(stock);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedIngredient);
     }
