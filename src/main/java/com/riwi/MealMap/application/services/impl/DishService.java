@@ -44,7 +44,7 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-public DishwhitIngredientsName createGeneric(DishWithoutId dishDTO) {
+public DishwhitIngredientsName createDish(DishWithoutId dishDTO) {
 
     Dish dish = Dish.builder()
             .name(dishDTO.getName())
@@ -174,22 +174,22 @@ public DishwhitIngredientsName createGeneric(DishWithoutId dishDTO) {
 
     @Transactional(readOnly = true)
     @Override
-    public List<DishWithoutIdAndWithDTO> getAvailableDish() {
+    public List<DishwhitIngredientsName> getAvailableDish() {
         
         List<Dish> dishesEntity = this.dishRepository.findDishesWithIngredients();
 
         return dishesEntity.stream()
         .map(dish-> {
-            DishWithoutIdAndWithDTO dishWithoutIdAndWithDTO = DishWithoutIdAndWithDTO.builder()
+            DishwhitIngredientsName dishDTO = DishwhitIngredientsName.builder()
             .name(dish.getName())
             .price(dish.getPrice())
             .promotion(dish.isPromotion())
             .typeOfDishes(dish.getTypeOfDishes())
             .build();
 
-            List<IngredientsOnlyWithName> ingredients = dish.getIngredients().stream()
+            List<IngredientsWithName> ingredients = dish.getIngredients().stream()
             .map(ingredient -> {
-                IngredientsOnlyWithName ingredientsWithoutId = IngredientsOnlyWithName.builder()
+                IngredientsWithName ingredientsWithoutId = IngredientsWithName.builder()
                 .name(ingredient.getName())
                 .build();
 
@@ -198,12 +198,15 @@ public DishwhitIngredientsName createGeneric(DishWithoutId dishDTO) {
 
             .collect(Collectors.toList());
 
-            dishWithoutIdAndWithDTO.setIngredients(ingredients);
-            return dishWithoutIdAndWithDTO;
+            dishDTO.setIngredients(ingredients);
+            return dishDTO;
         })
 
         .collect(Collectors.toList());
     }
+
+
+
 
     
 }

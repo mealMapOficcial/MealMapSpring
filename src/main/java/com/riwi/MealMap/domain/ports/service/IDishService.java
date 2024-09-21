@@ -7,11 +7,11 @@ import com.riwi.MealMap.application.dtos.request.DishwhitIngredientsName;
 import com.riwi.MealMap.domain.entities.Dish;
 
 public interface IDishService extends
-        CreateGeneric<DishwhitIngredientsName,DishWithoutId>,
+     CreateDish<DishWithoutId,DishwhitIngredientsName>,
         ReadByName<Dish, String>,
         ReadAll<Dish>,
         ReadById<Dish, Integer>,
         Delete<Integer>,
         Update<Integer, Dish>,
-        GetAvailableDish<DishWithoutIdAndWithDTO>{
+        GetAvailableDish<DishwhitIngredientsName>{
 }

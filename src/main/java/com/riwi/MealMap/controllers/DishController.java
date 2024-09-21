@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
+import com.riwi.MealMap.application.dtos.request.DishwhitIngredientsName;
 
 @RestController
 @RequestMapping("/dish")
@@ -40,7 +41,7 @@ public class DishController  {
     })
     public ResponseEntity<?> create(@RequestBody DishWithoutId dish) {
         
-            DishWithoutId dishEntity = this.dishService.createGeneric(dish);
+        DishwhitIngredientsName dishEntity = this.dishService.createDish(dish);
             return ResponseEntity.status(HttpStatus.CREATED).body(dishEntity);
            
 
@@ -83,7 +84,7 @@ public class DishController  {
 
     @GetMapping("/available")
     @ResponseStatus(HttpStatus.OK)
-    public List<DishWithoutIdAndWithDTO> getAvailableDish() {
+    public List<DishwhitIngredientsName> getAvailableDish() {
         try{
             return this.dishService.getAvailableDish();
         } catch (Exception e){

@@ -19,4 +19,6 @@ public class IngredientsWithoutId {
 
     @NotNull
     private String measure;
+
+    
 }
