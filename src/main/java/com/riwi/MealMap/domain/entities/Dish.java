@@ -1,5 +1,6 @@
 package com.riwi.MealMap.domain.entities;
 
+import com.riwi.MealMap.Valirdation.InvalidateEnum;
 import com.riwi.MealMap.domain.enums.TypeOfDishes;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
@@ -31,7 +32,8 @@ public class Dish {
    
     @Column(nullable = false)
     private boolean promotion;
-
+    
+    @InvalidateEnum
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;
 

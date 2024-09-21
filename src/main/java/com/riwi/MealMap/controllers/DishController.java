@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class DishController  {
         @ApiResponse(responseCode = "201", description = "Dish created successfully"),
         @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(schema = @Schema(implementation = ExceptionsResponse.class)))
     })
-    public ResponseEntity<?> create(@RequestBody DishWithoutId dish) {
+    public ResponseEntity<?> create( @Valid @RequestBody DishWithoutId dish) {
         
         DishwhitIngredientsName dishEntity = this.dishService.createDish(dish);
             return ResponseEntity.status(HttpStatus.CREATED).body(dishEntity);

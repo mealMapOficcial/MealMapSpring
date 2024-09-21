@@ -1,5 +1,6 @@
 package com.riwi.MealMap.application.dtos.request;
 
+import com.riwi.MealMap.Valirdation.InvalidateEnum;
 import com.riwi.MealMap.domain.enums.TypeOfDishes;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,6 +29,7 @@ public class DishWithoutId {
     @NotNull(message = "required")
     private boolean promotion;
 
+    @InvalidateEnum
     @NotNull(message = "TypeDishes is required")
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;

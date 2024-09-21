@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -36,7 +38,11 @@ public class BadRequest {
 
         if (exception instanceof MethodArgumentNotValidException e){
             e.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-        } else {
+        
+        }else if(exception instanceof GenericNotFoundExceptions e){
+            errors.add(e.getMessage());
+        }
+         else {
             errors.add(exception.getMessage());
         }
 
@@ -48,7 +54,7 @@ public class BadRequest {
     }
 
 
- 
+  
 
    
 }

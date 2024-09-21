@@ -1,6 +1,7 @@
 package com.riwi.MealMap.application.dtos.request;
 
 import com.riwi.MealMap.domain.enums.TypeOfDishes;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
+import com.riwi.MealMap.Valirdation.InvalidateEnum;
 
 @Data
 @NoArgsConstructor
@@ -27,7 +30,7 @@ public class DishWithoutIdAndWithDTO {
 
     @NotNull
     private boolean promotion;
-
+    @InvalidateEnum
     @NotNull(message = "TypeDishes is required")
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;
