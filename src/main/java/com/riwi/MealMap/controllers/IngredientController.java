@@ -4,6 +4,7 @@ import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
 import com.riwi.MealMap.application.services.impl.IngredientService;
 import com.riwi.MealMap.domain.ports.service.IIngredientService;
+import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,12 +37,14 @@ public class IngredientController implements IIngredientService {
     }
 
     @Override
+    @FetchOrders
     @GetMapping
     public List<Ingredient> readAll() {
         return ingredientService.readAll();
     }
 
     @Override
+    @FetchOrders
     @GetMapping("/readById/{id}")
     public Optional<Ingredient> readById(@PathVariable Integer id) {
 
@@ -51,6 +54,7 @@ public class IngredientController implements IIngredientService {
     }
 
     @Override
+    @FetchOrders
     @GetMapping("/readByName/{name}")
     public ResponseEntity<Ingredient> readByName(@PathVariable String name) {
         return ingredientService.readByName(name);

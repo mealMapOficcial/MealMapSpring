@@ -44,67 +44,65 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-public DishWithoutId createGeneric(DishWithoutId dishDTO) {
+    public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
-    Dish dish = Dish.builder()
-            .name(dishDTO.getName())
-            .price(dishDTO.getPrice())
-            .promotion(dishDTO.isPromotion())
-            .typeOfDishes(dishDTO.getTypeOfDishes())
-            .build(); 
-
-   
-    dish = this.dishRepository.save(dish);
-   
-
-    List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
-    List<Ingredient> ingredients = new ArrayList<>();
-    List<DishesIngredients> dishesIngredientsList = new ArrayList<>(); 
-
-
-    for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
-
-        Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
-                .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
-
-        
-        validateStock(ingredient, requestIngredient.getQuantity());
-
-        
-        DishesIngredients dishesIngredients = DishesIngredients.builder()
-                .ingredients(ingredient)
-                .quantity(requestIngredient.getQuantity())
-                .dishes(dish)  
+        Dish dish = Dish.builder()
+                .name(dishDTO.getName())
+                .price(dishDTO.getPrice())
+                .promotion(dishDTO.isPromotion())
+                .typeOfDishes(dishDTO.getTypeOfDishes())
                 .build();
 
-        
-        dishesIngredientsList.add(dishesIngredients);
 
-        
-        ingredients.add(ingredient);
+        dish = this.dishRepository.save(dish);
+
+
+        List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
+        List<Ingredient> ingredients = new ArrayList<>();
+        List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
+
+
+        for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+
+            Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
+                    .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
+
+
+            validateStock(ingredient, requestIngredient.getQuantity());
+
+
+            DishesIngredients dishesIngredients = DishesIngredients.builder()
+                    .ingredients(ingredient)
+                    .dishes(dish)
+                    .build();
+
+
+            dishesIngredientsList.add(dishesIngredients);
+
+
+            ingredients.add(ingredient);
+        }
+
+        this.dishIngredientRepository.saveAll(dishesIngredientsList);
+
+        dish.setIngredients(ingredients);
+
+        List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
+        .map(ingredient -> IngredientsOnlyWithName.builder()
+                .name(ingredient.getName())
+                .build())
+        .collect(Collectors.toList());
+
+
+        return DishWithoutId.builder()
+                .name(dish.getName())
+                .price(dish.getPrice())
+                .promotion(dish.isPromotion())
+                .typeOfDishes(dish.getTypeOfDishes())
+                .ingredients(ingredientsDish)
+
+                .build();
     }
-
-    this.dishIngredientRepository.saveAll(dishesIngredientsList);
-
-    dish.setIngredients(ingredients);
-
-    List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
-    .map(ingredient -> IngredientsOnlyWithName.builder()
-            .name(ingredient.getName())
-            .measure(ingredient.getMeasure())
-            .build())
-    .collect(Collectors.toList());
-
-    
-    return DishWithoutId.builder()
-            .name(dish.getName())
-            .price(dish.getPrice())
-            .promotion(dish.isPromotion())
-            .typeOfDishes(dish.getTypeOfDishes())
-            .ingredients(ingredientsDish)
-    
-            .build();
-}
 
 
 
@@ -209,7 +207,6 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
             .map(ingredient -> {
                 IngredientsOnlyWithName ingredientsWithoutId = IngredientsOnlyWithName.builder()
                 .name(ingredient.getName())
-                .measure(ingredient.getMeasure())
                 .build();
 
                 return ingredientsWithoutId;

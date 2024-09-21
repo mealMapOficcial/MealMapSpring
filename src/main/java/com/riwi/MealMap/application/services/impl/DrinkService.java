@@ -46,56 +46,35 @@ public class DrinkService implements IDrinkService {
                 .typeOfDrinks(drinkDTO.getTypeOfDrinks())
                 .build();
 
-
         drink = this.drinkRepository.save(drink);
 
-
         List<IngredientsOnlyWithName> ingredientsRequest = drinkDTO.getIngredients();
-        List<Ingredient> ingredients = new ArrayList<>();
         List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
 
-
         for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
-
             Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
                     .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
 
-
-            validateStock(ingredient, requestIngredient.getQuantity());
-
+            int quantity = 1;
+            validateStock(ingredient, quantity);
 
             DrinksIngredients drinksIngredients = DrinksIngredients.builder()
                     .ingredients(ingredient)
-                    .quantity(requestIngredient.getQuantity())
+                    .quantity(quantity)
                     .drinks(drink)
                     .build();
 
-
             drinksIngredientsList.add(drinksIngredients);
-
-
-            ingredients.add(ingredient);
         }
 
         this.drinkIngredientRepository.saveAll(drinksIngredientsList);
-
-        drink.setIngredients(ingredients);
-
-        List<IngredientsOnlyWithName> ingredientsDrinks = ingredients.stream()
-                .map(ingredient -> IngredientsOnlyWithName.builder()
-                        .name(ingredient.getName())
-                        .measure(ingredient.getMeasure())
-                        .build())
-                .collect(Collectors.toList());
-
 
         return DrinkWithoutId.builder()
                 .name(drink.getName())
                 .price(drink.getPrice())
                 .promotion(drink.isPromotion())
                 .typeOfDrinks(drink.getTypeOfDrinks())
-                .ingredients(ingredientsDrinks)
-
+                .ingredients(ingredientsRequest)
                 .build();
     }
 
@@ -200,7 +179,6 @@ public class DrinkService implements IDrinkService {
                             .map(ingredient -> {
                                 IngredientsOnlyWithName ingredientsWithoutId = IngredientsOnlyWithName.builder()
                                         .name(ingredient.getName())
-                                        .measure(ingredient.getMeasure())
                                         .build();
 
                                 return ingredientsWithoutId;

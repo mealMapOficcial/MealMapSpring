@@ -28,17 +28,13 @@ public class Dish {
     @Column(nullable = false)
     private Float price;
 
-    @PrePersist
-    public void prePersist() {
-        promotion = false;
-    }
-    @Column(nullable = false,columnDefinition="TINYINT()")
+    @Column(nullable = false)
     private boolean promotion;
 
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "dishes_ingredients",
             joinColumns = @JoinColumn(name = "dishes_id"),

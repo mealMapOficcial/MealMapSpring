@@ -6,6 +6,7 @@ import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
 import com.riwi.MealMap.application.dtos.request.DrinkWithoutIdAndWithDTO;
 import com.riwi.MealMap.application.services.impl.DrinkService;
 import com.riwi.MealMap.domain.entities.Drink;
+import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,6 +32,7 @@ public class DrinkController {
 
 
     @PostMapping("/create")
+    @FetchOrders
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Drink created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(schema = @Schema(implementation = ExceptionsResponse.class)))
@@ -49,12 +51,14 @@ public class DrinkController {
 
 
     @GetMapping("/readAll")
+    @FetchOrders
     public List<Drink> readAll() {
         return drinkService.readAll();
     }
 
 
     @GetMapping("/readById/{id}")
+    @FetchOrders
     public Optional<Drink> readById(@PathVariable Integer id) {
 
         Optional<Drink> drink = drinkService.readById(id);
@@ -64,6 +68,7 @@ public class DrinkController {
 
 
     @GetMapping("/readByName/{name}")
+    @FetchOrders
     public ResponseEntity<Drink> readByName(@PathVariable String name) {
         return drinkService.readByName(name);
     }

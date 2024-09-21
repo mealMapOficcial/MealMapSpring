@@ -35,7 +35,7 @@ public class Drink {
     @Enumerated(EnumType.STRING)
     private TypeOfDrinks typeOfDrinks;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "drinks_ingredients",
             joinColumns = @JoinColumn(name = "drinks_id"),

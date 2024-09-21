@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class IngredientsOnlyWithName {
     @NotNull
     private String name;
-    private String measure;
+    @NotNull
     private double  quantity;
 }
