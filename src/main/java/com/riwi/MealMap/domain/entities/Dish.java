@@ -32,7 +32,7 @@ public class Dish {
     public void prePersist() {
         promotion = false;
     }
-    @Column(nullable = false,columnDefinition="TINYINT()")
+    @Column(nullable = false)
     private boolean promotion;
 
     @Enumerated(EnumType.STRING)
