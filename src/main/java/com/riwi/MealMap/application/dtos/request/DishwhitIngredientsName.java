@@ -2,7 +2,6 @@ package com.riwi.MealMap.application.dtos.request;
 
 import java.util.List;
 
-import com.riwi.MealMap.Valirdation.InvalidateEnum;
 import com.riwi.MealMap.domain.enums.TypeOfDishes;
 
 import jakarta.persistence.EnumType;
@@ -32,7 +31,7 @@ public class DishwhitIngredientsName {
     @NotNull(message = "required")
     private boolean promotion;
     
-    @InvalidateEnum
+    
     @NotNull(message = "TypeDishes is required")
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;

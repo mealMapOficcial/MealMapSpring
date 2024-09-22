@@ -5,21 +5,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
-import com.riwi.MealMap.application.dtos.request.DrinkWithoutIdAndWithDTO;
-import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
-import com.riwi.MealMap.domain.entities.*;
-import com.riwi.MealMap.domain.ports.service.IDrinkService;
-import com.riwi.MealMap.infrastructure.persistence.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
-import com.riwi.MealMap.domain.ports.service.IDishService;
+import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
+import com.riwi.MealMap.application.dtos.request.DrinkWithoutIdAndWithDTO;
+import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
+import com.riwi.MealMap.domain.entities.Drink;
+import com.riwi.MealMap.domain.entities.DrinksIngredients;
+import com.riwi.MealMap.domain.entities.Ingredient;
+import com.riwi.MealMap.domain.entities.Stock;
+import com.riwi.MealMap.domain.ports.service.IDrinkService;
+import com.riwi.MealMap.infrastructure.persistence.DrinkIngredientRepository;
+import com.riwi.MealMap.infrastructure.persistence.DrinkRepository;
+import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
+import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 
 @Service
 public class DrinkService implements IDrinkService {
@@ -84,7 +87,6 @@ public class DrinkService implements IDrinkService {
         List<IngredientsOnlyWithName> ingredientsDrinks = ingredients.stream()
                 .map(ingredient -> IngredientsOnlyWithName.builder()
                         .name(ingredient.getName())
-                        .measure(ingredient.getMeasure())
                         .build())
                 .collect(Collectors.toList());
 
@@ -200,7 +202,6 @@ public class DrinkService implements IDrinkService {
                             .map(ingredient -> {
                                 IngredientsOnlyWithName ingredientsWithoutId = IngredientsOnlyWithName.builder()
                                         .name(ingredient.getName())
-                                        .measure(ingredient.getMeasure())
                                         .build();
 
                                 return ingredientsWithoutId;

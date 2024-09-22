@@ -35,7 +35,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
             Map<String, Object> responseMap = new HashMap<>();
             responseMap.put("dishes", dishes);
-            responseMap.put("drinks", drinks);
+           
 
             String response = objectMapper.writeValueAsString(responseMap);
             session.sendMessage(new TextMessage(response));

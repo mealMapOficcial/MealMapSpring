@@ -4,19 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.riwi.MealMap.application.dtos.exception.ExceptionBasic;
 import com.riwi.MealMap.application.dtos.exception.ExceptionResponse;
 import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
 import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
-@RestControllerAdvice
+
+
 
 public class BadRequest {
 
@@ -30,7 +28,7 @@ public class BadRequest {
                 .build();
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+   /* */ @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
         public ExceptionBasic badRequest(Exception exception){
 
@@ -38,11 +36,7 @@ public class BadRequest {
 
         if (exception instanceof MethodArgumentNotValidException e){
             e.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-        
-        }else if(exception instanceof GenericNotFoundExceptions e){
-            errors.add(e.getMessage());
-        }
-         else {
+        }else {
             errors.add(exception.getMessage());
         }
 
@@ -53,8 +47,7 @@ public class BadRequest {
                 .build();
     }
 
-
-  
+ 
 
    
 }

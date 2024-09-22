@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = InvalidateEnumValidation.class)
 public @interface InvalidateEnum {
-
+    Class<? extends Enum<?>> enumClass();
     String message() default "Invalid type dish";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
