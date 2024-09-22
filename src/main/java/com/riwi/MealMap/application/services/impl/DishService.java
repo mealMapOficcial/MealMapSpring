@@ -173,7 +173,10 @@ public DishWithoutId createGeneric(DishWithoutId dishDTO) {
 
                         return false;
                     }
-                    double getQuantity = dishesIngredients.get().getQuantity();
+
+                    IngredientsOnlyWithName ingredientsOnlyWithName = new IngredientsOnlyWithName();
+
+                    double getQuantity = ingredientsOnlyWithName.getQuantity();
 
                     Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
                     if (stock == null) {
