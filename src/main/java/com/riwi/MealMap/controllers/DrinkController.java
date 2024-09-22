@@ -7,6 +7,7 @@ import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
 import com.riwi.MealMap.application.dtos.request.DrinkWithoutIdAndWithDTO;
 import com.riwi.MealMap.application.services.impl.DrinkService;
 import com.riwi.MealMap.domain.entities.Drink;
+import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -52,12 +53,14 @@ public class DrinkController {
 
 
     @GetMapping("/readAll")
+    @FetchOrders
     public List<Drink> readAll() {
         return drinkService.readAll();
     }
 
 
     @GetMapping("/readById/{id}")
+    @FetchOrders
     public Optional<Drink> readById(@PathVariable Integer id) {
 
         Optional<Drink> drink = drinkService.readById(id);
@@ -67,6 +70,7 @@ public class DrinkController {
 
 
     @GetMapping("/readByName/{name}")
+    @FetchOrders
     public ResponseEntity<Drink> readByName(@PathVariable String name) {
         return drinkService.readByName(name);
     }
@@ -76,16 +80,4 @@ public class DrinkController {
         return drinkService.updateDTO(id, drink);
     }
 
-
-    @GetMapping("/available")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DrinkWithoutIdAndWithDTO> getAvailableDish() {
-        try{
-            return this.drinkService.getAvailableDrink();
-        } catch (Exception e){
-
-            throw new GenericNotFoundExceptions( "ERROR FOUND DISHES");
-        }
-
-    }
 }

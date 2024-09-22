@@ -3,6 +3,7 @@ package com.riwi.MealMap.controllers;
 import com.riwi.MealMap.application.services.impl.StockService;
 import com.riwi.MealMap.domain.entities.Stock;
 import com.riwi.MealMap.domain.ports.service.IStockService;
+import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ public class StockController implements IStockService {
 
     @Override
     @GetMapping("/readAll")
+    @FetchOrders
     public List<Stock> readAll() {
         return stockService.readAll();
     }

@@ -6,12 +6,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,13 +27,14 @@ public class DrinkWithoutId {
     @Positive(message = "Price must be positive")
     private Float price;
 
-    @NotNull
+    @NotNull(message = "Promotion is required")
     private boolean promotion;
 
-    @NotNull(message = "TypeDishes is required")
+    @NotNull(message = "Type of Drinks is required")
     @Enumerated(EnumType.STRING)
     private TypeOfDrinks typeOfDrinks;
 
-    @NotNull(message = "Ingrediens is required")
+    @NotNull(message = "Ingredients are required")
+    @Size(min = 1, message = "At least one ingredient is required")
     private List<IngredientsOnlyWithName> ingredients;
 }

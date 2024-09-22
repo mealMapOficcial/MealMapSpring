@@ -1,10 +1,12 @@
 package com.riwi.MealMap.controllers;
 
+import com.riwi.MealMap.application.dtos.request.DishUpdateDTO;
 import com.riwi.MealMap.application.dtos.request.DishWithoutId;
 import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.application.services.impl.DishService;
 
+import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -53,12 +55,14 @@ public class DishController  {
 
 
     @GetMapping("/readAll")
+    @FetchOrders
     public List<Dish> readAll() {
         return dishService.readAll();
     }
 
 
     @GetMapping("/readById/{id}")
+    @FetchOrders
     public Optional<Dish> readById(@PathVariable Integer id) {
 
         Optional<Dish> dish = dishService.readById(id);
@@ -67,25 +71,14 @@ public class DishController  {
     }
 
     @GetMapping("/readByName/{name}")
+    @FetchOrders
     public ResponseEntity<Dish> readByName(@PathVariable String name) {
         return dishService.readByName(name);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Dish> update(@PathVariable Integer id,@RequestBody Dish dish) {
-        return dishService.update(id, dish);
+    public ResponseEntity<Dish> updateDTO(@PathVariable Integer id,@RequestBody DishUpdateDTO dish) {
+        return dishService.updateDTO(id, dish);
     }
 
-
-    @GetMapping("/available")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DishWithoutIdAndWithDTO> getAvailableDish() {
-        try{
-            return this.dishService.getAvailableDish();
-        } catch (Exception e){
-
-            throw new GenericNotFoundExceptions( "ERROR FOUND DISHES");
-        }
-
-    }
 }

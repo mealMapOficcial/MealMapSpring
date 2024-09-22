@@ -12,6 +12,5 @@ public interface IDrinkService extends
         ReadAll<Drink>,
         ReadById<Drink, Integer>,
         Delete<Integer>,
-        UpdateDTO<Integer, DrinkUpdateDTO, Drink>,
-        GetAvailableDrink<DrinkWithoutIdAndWithDTO> {
+        UpdateDTO<Integer, DrinkUpdateDTO, Drink> {
 }
