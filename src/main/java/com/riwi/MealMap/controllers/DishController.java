@@ -44,8 +44,6 @@ public class DishController  {
         
             DishWithoutId dishEntity = this.dishService.createGeneric(dish);
             return ResponseEntity.status(HttpStatus.CREATED).body(dishEntity);
-           
-
     }
 
     @DeleteMapping("/delete/{id}")
