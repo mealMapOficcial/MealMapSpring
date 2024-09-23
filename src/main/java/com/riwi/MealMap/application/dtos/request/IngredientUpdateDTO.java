@@ -12,14 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IngredientsWithoutId {
-
+public class IngredientUpdateDTO {
     @NotBlank(message = "Name is required")
     private String name;
 
+    @NotNull(message = "Price is required")
     @Positive(message = "Price must be positive")
-    private Float price;
-
-    @NotBlank(message = "Measure is required")
-    private String measure;
+    private double price;
 }

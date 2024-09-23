@@ -5,26 +5,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.riwi.MealMap.application.dtos.request.DishWithoutId;
-import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
-import com.riwi.MealMap.application.dtos.request.IngredientsOnlyWithName;
+import com.riwi.MealMap.application.dtos.request.*;
+import com.riwi.MealMap.domain.entities.*;
+import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
+import com.riwi.MealMap.application.dtos.exception.IngredientNotFoundException;
+import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
+import com.riwi.MealMap.application.dtos.exception.StockNotFoundException;
+
+import com.riwi.MealMap.domain.ports.service.IDishService;
+import com.riwi.MealMap.infrastructure.persistence.DishIngredientRepository;
+import com.riwi.MealMap.infrastructure.persistence.DishRepository;
+import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
+import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
-import com.riwi.MealMap.domain.entities.Dish;
-import com.riwi.MealMap.domain.entities.DishesIngredients;
-import com.riwi.MealMap.domain.entities.Ingredient;
-import com.riwi.MealMap.domain.entities.Stock;
-import com.riwi.MealMap.domain.ports.service.IDishService;
-import com.riwi.MealMap.infrastructure.persistence.DishIngredientRepository;
-import com.riwi.MealMap.infrastructure.persistence.DishRepository;
-import com.riwi.MealMap.infrastructure.persistence.IngredientRepository;
-import com.riwi.MealMap.infrastructure.persistence.StockRepository;
 
 @Service
 public class DishService implements IDishService {
@@ -44,187 +42,160 @@ public class DishService implements IDishService {
     StockRepository stockRepository;
 
     @Override
-public DishWithoutId createGeneric(DishWithoutId dishDTO) {
+    public DishWithoutId createGeneric(DishWithoutId dishDTO) {
+        try {
+            Dish dish = Dish.builder()
+                    .name(dishDTO.getName())
+                    .price(dishDTO.getPrice())
+                    .promotion(dishDTO.isPromotion())
+                    .typeOfDishes(dishDTO.getTypeOfDishes())
+                    .build();
 
-    Dish dish = Dish.builder()
-            .name(dishDTO.getName())
-            .price(dishDTO.getPrice())
-            .promotion(dishDTO.isPromotion())
-            .typeOfDishes(dishDTO.getTypeOfDishes())
-            .build(); 
+            dish = this.dishRepository.save(dish);
+            List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
+            List<Ingredient> ingredients = new ArrayList<>();
+            List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
 
-   
-    dish = this.dishRepository.save(dish);
-   
+            for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+                Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
+                        .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found: " + requestIngredient.getName()));
 
-    List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
-    List<Ingredient> ingredients = new ArrayList<>();
-    List<DishesIngredients> dishesIngredientsList = new ArrayList<>(); 
+                validateStock(ingredient, requestIngredient.getQuantity());
 
+                DishesIngredients dishesIngredients = DishesIngredients.builder()
+                        .ingredients(ingredient)
+                        .quantity(requestIngredient.getQuantity())
+                        .dishes(dish)
+                        .build();
 
-    for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+                dishesIngredientsList.add(dishesIngredients);
+                ingredients.add(ingredient);
+            }
 
-        Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
-                .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
+            this.dishIngredientRepository.saveAll(dishesIngredientsList);
+            dish.setIngredients(ingredients);
 
-        
-        validateStock(ingredient, requestIngredient.getQuantity());
+            List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
+                    .map(ingredient -> IngredientsOnlyWithName.builder()
+                            .name(ingredient.getName())
+                            .build())
+                    .collect(Collectors.toList());
 
-        
-        DishesIngredients dishesIngredients = DishesIngredients.builder()
-                .ingredients(ingredient)
-                .quantity(requestIngredient.getQuantity())
-                .dishes(dish)  
-                .build();
-
-        
-        dishesIngredientsList.add(dishesIngredients);
-
-        
-        ingredients.add(ingredient);
+            return DishWithoutId.builder()
+                    .name(dish.getName())
+                    .price(dish.getPrice())
+                    .promotion(dish.isPromotion())
+                    .typeOfDishes(dish.getTypeOfDishes())
+                    .ingredients(ingredientsDish)
+                    .build();
+        } catch (IngredientNotFoundException | InsufficientIngredientsException ex) {
+            logger.error("Error creating dish: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Unexpected error: {}", ex.getMessage());
+            throw new RuntimeException("Failed to create dish: " + ex.getMessage());
+        }
     }
 
-    this.dishIngredientRepository.saveAll(dishesIngredientsList);
-
-    dish.setIngredients(ingredients);
-
-    List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
-    .map(ingredient -> IngredientsOnlyWithName.builder()
-            .name(ingredient.getName())
-            .measure(ingredient.getMeasure())
-            .build())
-    .collect(Collectors.toList());
-
-    
-    return DishWithoutId.builder()
-            .name(dish.getName())
-            .price(dish.getPrice())
-            .promotion(dish.isPromotion())
-            .typeOfDishes(dish.getTypeOfDishes())
-            .ingredients(ingredientsDish)
-    
-            .build();
-}
-
-
-
-    private  void validateStock(Ingredient ingrediente, double quantity){
-        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
-        if(stock.isPresent()){
-            if(stock.get().getAmount() < quantity){
-                throw new GenericNotFoundExceptions(("Not enought to create that dish" + ingrediente.getName()));
+    private void validateStock(Ingredient ingredient, double quantity) {
+        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingredient.getId()));
+        if (stock.isPresent()) {
+            if (stock.get().getAmount() < quantity) {
+                throw new InsufficientIngredientsException("Not enough to create that dish: " + ingredient.getName());
             }
         } else {
-            throw new GenericNotFoundExceptions(("Stock not found for ingredient" + ingrediente.getName()));
+            throw new StockNotFoundException("Stock not found for ingredient: " + ingredient.getName());
         }
     }
 
     @Override
     public void delete(Integer id) {
-        dishRepository.deleteById(id);
+        try {
+            if (!dishRepository.existsById(id)) {
+                throw new GenericNotFoundExceptions("Dish not found with id: " + id);
+            }
+            dishRepository.deleteById(id);
+        } catch (GenericNotFoundExceptions ex) {
+            logger.error("Error deleting dish: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Unexpected error during deletion: {}", ex.getMessage());
+            throw new RuntimeException("Failed to delete dish: " + ex.getMessage());
+        }
     }
 
     @Override
     public List<Dish> readAll() {
-        return dishRepository.findAll();
+        try {
+            return dishRepository.findAll();
+        } catch (Exception ex) {
+            logger.error("Error retrieving dishes: {}", ex.getMessage());
+            throw new RuntimeException("Failed to retrieve dishes: " + ex.getMessage());
+        }
     }
 
     @Override
     public Optional<Dish> readById(Integer id) {
-        return dishRepository.findById(id);
+        return dishRepository.findById(id)
+                .map(Optional::of)
+                .orElseThrow(() -> new GenericNotFoundExceptions("Dish not found with id: " + id));
     }
+
 
     @Override
     public ResponseEntity<Dish> readByName(String name) {
-
-        Optional<Dish> dish = dishRepository.findByName(name);
-
-        if (dish.isPresent()) {
-            return ResponseEntity.ok(dish.get());
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            Optional<Dish> dish = dishRepository.findByName(name);
+            if (dish.isPresent()) {
+                return ResponseEntity.ok(dish.get());
+            } else {
+                throw new GenericNotFoundExceptions("Dish not found with name: " + name);
+            }
+        } catch (GenericNotFoundExceptions ex) {
+            logger.error("Error retrieving dish by name: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Unexpected error retrieving dish: {}", ex.getMessage());
+            throw new RuntimeException("Failed to retrieve dish: " + ex.getMessage());
         }
     }
 
     @Override
-    public ResponseEntity<Dish> update(Integer id, Dish dish) {
-        Dish existingDish = dishRepository.findById(id).orElse(null);
+    public ResponseEntity<Dish> updateDTO(Integer id, DishUpdateDTO dishDTO) {
+        try {
+            Dish existingDish = dishRepository.findById(id)
+                    .orElseThrow(() -> new GenericNotFoundExceptions("Dish not found with id: " + id));
 
-        if (existingDish != null) {
+            existingDish.setName(dishDTO.getName());
+            existingDish.setPrice(dishDTO.getPrice());
+            existingDish.setPromotion(dishDTO.isPromotion());
+            existingDish.setTypeOfDishes(dishDTO.getTypeOfDishes());
 
-            existingDish.setName(dish.getName());
-            existingDish.setPrice(dish.getPrice());
-            existingDish.setTypeOfDishes(dish.getTypeOfDishes());
-            existingDish.setIngredients(dish.getIngredients());
+            List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
 
+            for (IngredientUpdateDTO requestIngredient : dishDTO.getIngredients()) {
+                Ingredient ingredient = ingredientRepository.findOneByName(requestIngredient.getName())
+                        .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found: " + requestIngredient.getName()));
+
+                DishesIngredients dishesIngredients = new DishesIngredients();
+                dishesIngredients.setIngredients(ingredient);
+
+                dishesIngredientsList.add(dishesIngredients);
+            }
+
+            List<Ingredient> ingredientList = dishesIngredientsList.stream()
+                    .map(DishesIngredients::getIngredients)
+                    .collect(Collectors.toList());
+
+            existingDish.setIngredients(ingredientList);
             Dish savedDish = dishRepository.save(existingDish);
             return ResponseEntity.ok(savedDish);
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (IngredientNotFoundException | GenericNotFoundExceptions ex) {
+            logger.error("Error updating dish: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Unexpected error during update: {}", ex.getMessage());
+            throw new RuntimeException("Failed to update dish: " + ex.getMessage());
         }
     }
-
-   
-
-    private boolean isAvailable(Dish dish) {
-        return dish.getIngredients().stream()
-                .allMatch(ingredients -> {
-                    Optional<DishesIngredients> dishesIngredients =
-                            this.dishIngredientRepository.findByIngredientsIdAndDishesId(ingredients.getId(),
-                                    dish.getId());
-                    if (dishesIngredients.isEmpty()) {
-
-                        return false;
-                    }
-                    double getQuantity = dishesIngredients.get().getQuantity();
-
-                    Stock stock = this.stockRepository.findByIngredientId(ingredients.getId());
-                    if (stock == null) {
-                        return false;
-                    }
-                    return stock.getAmount() >= getQuantity;
-                });
-    }
-
-
-
-    
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<DishWithoutIdAndWithDTO> getAvailableDish() {
-        
-        List<Dish> dishesEntity = this.dishRepository.findDishesWithIngredients();
-
-        return dishesEntity.stream()
-        .map(dish-> {
-            DishWithoutIdAndWithDTO dishWithoutIdAndWithDTO = DishWithoutIdAndWithDTO.builder()
-            .name(dish.getName())
-            .price(dish.getPrice())
-            .promotion(dish.isPromotion())
-            .typeOfDishes(dish.getTypeOfDishes())
-            .build();
-
-            List<IngredientsOnlyWithName> ingredients = dish.getIngredients().stream()
-            .map(ingredient -> {
-                IngredientsOnlyWithName ingredientsWithoutId = IngredientsOnlyWithName.builder()
-                .name(ingredient.getName())
-                .measure(ingredient.getMeasure())
-                .build();
-
-                return ingredientsWithoutId;
-            })
-
-            .collect(Collectors.toList());
-
-            dishWithoutIdAndWithDTO.setIngredients(ingredients);
-            return dishWithoutIdAndWithDTO;
-        })
-
-        .collect(Collectors.toList());
-    }
 }
-
-
-
-

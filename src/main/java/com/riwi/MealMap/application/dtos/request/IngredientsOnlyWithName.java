@@ -1,6 +1,8 @@
 package com.riwi.MealMap.application.dtos.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +13,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class IngredientsOnlyWithName {
-    @NotNull
+
+    @NotBlank(message = "Name is required")
     private String name;
-    private String measure;
-    private double  quantity;
+
+    @NotNull(message = "Quantity is required")
+    @Positive(message = "Quantity must be positive")
+    private double quantity;
 }

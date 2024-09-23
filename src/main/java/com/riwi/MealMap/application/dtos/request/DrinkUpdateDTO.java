@@ -1,8 +1,6 @@
 package com.riwi.MealMap.application.dtos.request;
 
-import com.riwi.MealMap.domain.enums.TypeOfDishes;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.riwi.MealMap.domain.enums.TypeOfDrinks;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -18,23 +16,23 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DishWithoutId {
+public class DrinkUpdateDTO {
 
-    @NotBlank(message = "Name is required")
+    @NotNull(message = "Name is required")
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     @NotNull(message = "Price is required")
     @Positive(message = "Price must be positive")
-    private Float price;
+    private float price;
 
     @NotNull(message = "Promotion is required")
     private boolean promotion;
 
-    @NotNull(message = "Type of Dishes is required")
-    @Enumerated(EnumType.STRING)
-    private TypeOfDishes typeOfDishes;
+    @NotNull(message = "Type of Drinks is required")
+    private TypeOfDrinks typeOfDrinks;
 
     @NotNull(message = "Ingredients are required")
     @Size(min = 1, message = "At least one ingredient is required")
-    private List<IngredientsOnlyWithName> ingredients;
+    private List<IngredientUpdateDTO> ingredients;
 }
