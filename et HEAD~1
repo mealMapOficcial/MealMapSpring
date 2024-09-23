@@ -1,0 +1,276 @@
+[33mcommit 64cb5a332ed672133fc9e598f07ca037c31bd9dc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/error[m[33m)[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sun Sep 22 18:00:45 2024 -0500
+
+    Create env
+
+[33mcommit 9764ae0a8c207d41cbcb815149ec7cb6bf02c48a[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sun Sep 22 17:59:54 2024 -0500
+
+    Create env
+
+[33mcommit d44c3aaa640af470ca6dfac5f66de4b3926aa7d2[m[33m ([m[1;32mdevelop[m[33m)[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sun Sep 22 17:21:06 2024 -0500
+
+    Make the config of the env
+
+[33mcommit f2b72605b591db8889f92254df94f2968c4fd64f[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sun Sep 22 15:19:21 2024 -0500
+
+    Repair problems
+
+[33mcommit f5f140228f07011d40a14cb792ed6084169ced17[m
+Merge: 87e54fb bcc0226
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sun Sep 22 03:37:07 2024 -0500
+
+    Repair conflicts in develop
+
+[33mcommit 87e54fb116efb489591082bbe6831421cbcdddb1[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sun Sep 22 03:26:51 2024 -0500
+
+    Repair errors in branch develop
+
+[33mcommit bcc0226640a3aebbbff0d162378abbdbac40ff90[m[33m ([m[1;31morigin/develop[m[33m)[m
+Author: Nar Mena <narciris.tech@gmail.com>
+Date:   Sat Sep 21 18:05:29 2024 -0500
+
+    delete tinity column dish
+
+[33mcommit 3907473622988a30aa13cc496721909059a4d8e4[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: vergaraCoder <jhonatanvergara072@gmail.com>
+Date:   Fri Sep 20 17:11:28 2024 -0500
+
+    Fix errors
+
+[33mcommit da2617a44578b083be2e5d77dcdba05c08db72df[m
+Author: SamuelCoder1 <161090562+SamuelCoder1@users.noreply.github.com>
+Date:   Fri Sep 20 16:35:30 2024 -0500
+
+    Feature/menu (#11)
+    
+    * Create CRUD for Drinks
+    
+    * Repair Dockerfile
+    
+    * Create Custon Annotation
+    
+    * Add exceptions for notfoundingredients and insufficientingredients
+    
+    * Repair errors
+    
+    * Repair more errors
+    
+    * Changes in webSocket
+
+[33mcommit 470ee2f3c1fd54ac425f5179f5d7481e93c30abb[m
+Merge: 0358d5f 488dcf0
+Author: SoyNar <155842504+SoyNar@users.noreply.github.com>
+Date:   Thu Sep 19 21:23:02 2024 -0500
+
+    Merge pull request #12 from mealMapOficcial/feature/createDish
+    
+    Feature/create dish
+
+[33mcommit 488dcf0dc50aada5e2ee7ba1c9e861a5c6acded0[m
+Author: Nar Mena <narciris.tech@gmail.com>
+Date:   Thu Sep 19 21:19:30 2024 -0500
+
+    changes createe dish and available dich
+
+[33mcommit 6247ba39f6893568c82c29bb2b36df215260bfaa[m
+Merge: f7fd62e 0358d5f
+Author: Nar Mena <narciris.tech@gmail.com>
+Date:   Thu Sep 19 20:45:39 2024 -0500
+
+    creating funcionalities about dishes
+
+[33mcommit f7fd62e6da4cffd120d94f9b1e345352d4149a5b[m
+Author: Nar Mena <narciris.tech@gmail.com>
+Date:   Thu Sep 19 20:41:49 2024 -0500
+
+    readDishes available
+
+[33mcommit 0358d5fdbe5e39e259c2eb75cf55287d21017d45[m
+Author: Nar Mena <narciris.tech@gmail.com>
+Date:   Thu Sep 19 15:34:02 2024 -0500
+
+    deleting properties file settings
+
+[33mcommit 431232de56b82c6ba745531fcfcfc77779771b6b[m
+Author: Nar Mena <narciris.tech@gmail.com>
+Date:   Thu Sep 19 15:03:05 2024 -0500
+
+    edit metho createdish
+
+[33mcommit 05f5f1025fc57390b9feeafd94ba8cb3f1f9c442[m
+Author: Nar Mena <narciris.tech@gmail.com>
+Date:   Thu Sep 19 11:24:36 2024 -0500
+
+     add changes method create dish
+
+[33mcommit 98ef0cbc3ab1e84868766d50eb5eab3f0766d6e1[m
+Author: SoyNar <narciris.tech@gmail.com>
+Date:   Wed Sep 18 20:18:57 2024 -0500
+
+    add creating dish
+
+[33mcommit b9cf5625173028b8fc89414c2036fbfce139beaa[m
+Author: SoyNar <narciris.tech@gmail.com>
+Date:   Wed Sep 18 19:00:34 2024 -0500
+
+    add changes
+
+[33mcommit ecf0135421abdf2cc8bc380024e4e58b406fd4d6[m
+Author: SoyNar <narciris.tech@gmail.com>
+Date:   Wed Sep 18 18:23:05 2024 -0500
+
+    update changes
+
+[33mcommit 3df257ec6fd91b7a43f4e20506097363b5d9ee35[m
+Merge: ca3a75b 993bc8e
+Author: SoyNar <narciris.tech@gmail.com>
+Date:   Wed Sep 18 17:57:31 2024 -0500
+
+    Merge branch 'feature/createDish' of https://github.com/mealMapOficcial/MealMapSpring into feature/createDish
+
+[33mcommit 993bc8e7d39157f7ec7f5ef3fd7cc882fd722bfa[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Tue Sep 17 21:39:06 2024 -0500
+
+    The logic of stock and ingredients is carried out when creating a dish.
+
+[33mcommit 3ef568dc7525d14b1b009f3342a5c7726b3d1a43[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Mon Sep 16 20:41:29 2024 -0500
+
+    Docker file is already
+
+[33mcommit ca3a75b0ae753410f7f4b3d5282eb491fd31860d[m
+Author: SoyNar <narciris.tech@gmail.com>
+Date:   Mon Sep 16 16:35:36 2024 -0500
+
+    chagnes
+
+[33mcommit ef32e44f041750a7b4b47a756eb025ff6d509867[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sun Sep 15 22:43:47 2024 -0500
+
+    CRUD of TypeDish is already
+
+[33mcommit 6aaf35e04749367ef77c7a6d5285da3a10ac7ee7[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Sat Sep 14 21:17:35 2024 -0500
+
+    Create CRUD for Dish
+
+[33mcommit b5be1ebbd722e92f0414dae592960477882aefb4[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Fri Sep 13 20:58:12 2024 -0500
+
+    Create classes Drinks, Dishes, TypeOfDishes and TypeOfDrinks
+
+[33mcommit 95c7ceee48dca09f191e9b496350bf58a7de387d[m
+Author: SamuelCoder1 <161090562+SamuelCoder1@users.noreply.github.com>
+Date:   Thu Sep 12 17:10:29 2024 -0500
+
+    Feature/ingredients (#8)
+    
+    * The methods for ingredients are carried out
+    
+    * The methods for ingredients are carried out
+    
+    * The CRUD methods and the Read by name in ingredients are carried out
+    
+    * Repair errors of configurations
+    
+    * Repair errors of configurations
+    
+    * Change method readById
+    
+    * Feature/ingredients (#7)
+    
+    * The methods for ingredients are carried out
+    
+    * The methods for ingredients are carried out
+    
+    * The CRUD methods and the Read by name in ingredients are carried out
+    
+    * Repair errors in develop
+    
+    * Repair controller
+    
+    * Repair more errors in develop
+    
+    * Repair conflicts
+    
+    * The CRUD methods and the Read by name in ingredients are carried out
+    
+    * The CRUD methods and the Read by name in ingredients are carried out
+    
+    * Repair errors of configurations
+    
+    * Feature/ingredients (#7)
+    
+    * The methods for ingredients are carried out
+    
+    * The methods for ingredients are carried out
+    
+    * The CRUD methods and the Read by name in ingredients are carried out
+    
+    * Repair conflicts
+
+[33mcommit e9da63a21985f25cf5ecfc8c12134ab918ffe027[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Thu Sep 12 16:36:55 2024 -0500
+
+    Repair more errors in develop
+
+[33mcommit 10ece1a43e0f57093bf7a6d604781f9b1b062303[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Thu Sep 12 16:32:02 2024 -0500
+
+    Repair errors in develop
+
+[33mcommit dd6d44c93bb1c96cfeb2090b6296db9186b1660f[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Thu Sep 12 16:30:00 2024 -0500
+
+    Repair errors in develop
+
+[33mcommit f84feecba5276d548bd5a7e1723db6bfbfeaf3f3[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Thu Sep 12 16:29:54 2024 -0500
+
+    Repair errors in develop
+
+[33mcommit 7dc4920f8b2c0e33033a49eb023a02581854d443[m
+Author: SamuelCoder1 <161090562+SamuelCoder1@users.noreply.github.com>
+Date:   Thu Sep 12 16:11:02 2024 -0500
+
+    Feature/ingredients (#7)
+    
+    * The methods for ingredients are carried out
+    
+    * The methods for ingredients are carried out
+    
+    * The CRUD methods and the Read by name in ingredients are carried out
+
+[33mcommit 89caaf9ccfa632b8d5bb7a2db3c04e083c06d273[m
+Author: samuelcoder1 <echeverrysamuel74@gmail.com>
+Date:   Thu Sep 12 15:13:19 2024 -0500
+
+    Web socket configuration is done
+
+[33mcommit be98faa58234752e1c1ba98810bd2c7afdcacb7a[m
+Author: SamuelCoder1 <161090562+SamuelCoder1@users.noreply.github.com>
+Date:   Thu Sep 12 15:10:40 2024 -0500
+
+    Delete .idea directory
+
+[33mcommit 2005d900c7f05be2d449af59ee211650d2405ea3[m
+Author: samuelcoder1 <echeverrys
