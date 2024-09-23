@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id")
+    private Integer idTable;
 
     @Column(nullable = false)
     private Integer numberOfChairs;
@@ -20,8 +21,7 @@ public class Table {
     @Column(nullable = false)
     private Boolean disponibility;
 
-    public boolean isAvailable() {
-        this.disponibility = !this.disponibility;
-        return false;
-    }
+    @Column(nullable = false)
+    private Integer floor;
+
 }
