@@ -152,7 +152,6 @@ public class DrinkService implements IDrinkService {
             existingDrink.setTypeOfDrinks(drinkDTO.getTypeOfDrinks());
         }
 
-        // Manejo de ingredientes
         List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
 
         if (drinkDTO.getIngredients() != null && !drinkDTO.getIngredients().isEmpty()) {
@@ -166,7 +165,6 @@ public class DrinkService implements IDrinkService {
             }
         }
 
-        // Si drinksIngredientsList no está vacío, actualizar ingredientes
         if (!drinksIngredientsList.isEmpty()) {
             existingDrink.setIngredients(drinksIngredientsList.stream()
                     .map(DrinksIngredients::getIngredients)
@@ -176,6 +174,4 @@ public class DrinkService implements IDrinkService {
         Drink savedDrink = drinkRepository.save(existingDrink);
         return ResponseEntity.ok(savedDrink);
     }
-
-
 }
