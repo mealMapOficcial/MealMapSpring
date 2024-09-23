@@ -30,6 +30,8 @@ public class DrinkWithoutId {
     @NotNull(message = "Promotion is required")
     private boolean promotion;
 
+    private String imageUrl;
+
     @NotNull(message = "Type of Drinks is required")
     @Enumerated(EnumType.STRING)
     private TypeOfDrinks typeOfDrinks;

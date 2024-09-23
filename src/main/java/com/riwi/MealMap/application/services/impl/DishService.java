@@ -48,6 +48,7 @@ public class DishService implements IDishService {
                     .name(dishDTO.getName())
                     .price(dishDTO.getPrice())
                     .promotion(dishDTO.isPromotion())
+                    .imageUrl(dishDTO.getImageUrl())
                     .typeOfDishes(dishDTO.getTypeOfDishes())
                     .build();
 
@@ -162,40 +163,45 @@ public class DishService implements IDishService {
 
     @Override
     public ResponseEntity<Dish> updateDTO(Integer id, DishUpdateDTO dishDTO) {
-        try {
-            Dish existingDish = dishRepository.findById(id)
-                    .orElseThrow(() -> new GenericNotFoundExceptions("Dish not found with id: " + id));
+        Dish existingDish = dishRepository.findById(id)
+                .orElseThrow(() -> new GenericNotFoundExceptions("Dish not found with id: " + id));
 
+        if (dishDTO.getName() != null) {
             existingDish.setName(dishDTO.getName());
+        }
+        if (dishDTO.getPrice() != null) {
             existingDish.setPrice(dishDTO.getPrice());
-            existingDish.setPromotion(dishDTO.isPromotion());
+        }
+        if (dishDTO.getPromotion() != null) {
+            existingDish.setPromotion(dishDTO.getPromotion());
+        }
+        if (dishDTO.getImageUrl() != null) {
+            existingDish.setImageUrl(dishDTO.getImageUrl());
+        }
+        if (dishDTO.getTypeOfDishes() != null) {
             existingDish.setTypeOfDishes(dishDTO.getTypeOfDishes());
+        }
 
-            List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
+        List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
 
+        if (dishDTO.getIngredients() != null && !dishDTO.getIngredients().isEmpty()) {
             for (IngredientUpdateDTO requestIngredient : dishDTO.getIngredients()) {
                 Ingredient ingredient = ingredientRepository.findOneByName(requestIngredient.getName())
                         .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found: " + requestIngredient.getName()));
 
                 DishesIngredients dishesIngredients = new DishesIngredients();
                 dishesIngredients.setIngredients(ingredient);
-
                 dishesIngredientsList.add(dishesIngredients);
             }
-
-            List<Ingredient> ingredientList = dishesIngredientsList.stream()
-                    .map(DishesIngredients::getIngredients)
-                    .collect(Collectors.toList());
-
-            existingDish.setIngredients(ingredientList);
-            Dish savedDish = dishRepository.save(existingDish);
-            return ResponseEntity.ok(savedDish);
-        } catch (IngredientNotFoundException | GenericNotFoundExceptions ex) {
-            logger.error("Error updating dish: {}", ex.getMessage());
-            throw ex;
-        } catch (Exception ex) {
-            logger.error("Unexpected error during update: {}", ex.getMessage());
-            throw new RuntimeException("Failed to update dish: " + ex.getMessage());
         }
+
+        if (!dishesIngredientsList.isEmpty()) {
+            existingDish.setIngredients(dishesIngredientsList.stream()
+                    .map(DishesIngredients::getIngredients)
+                    .collect(Collectors.toList()));
+        }
+
+        Dish savedDish = dishRepository.save(existingDish);
+        return ResponseEntity.ok(savedDish);
     }
 }

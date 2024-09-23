@@ -77,8 +77,15 @@ public class DishController  {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Dish> updateDTO(@PathVariable Integer id,@RequestBody DishUpdateDTO dish) {
-        return dishService.updateDTO(id, dish);
+    public ResponseEntity<?> updateDTO(@PathVariable Integer id, @RequestBody DishUpdateDTO dishUpdateDTO) {
+        Optional<Dish> existingDish = dishService.readById(id);
+
+        if (existingDish.isPresent()) {
+            ResponseEntity<Dish> updatedDish = dishService.updateDTO(id, dishUpdateDTO);
+            return ResponseEntity.ok(updatedDish);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

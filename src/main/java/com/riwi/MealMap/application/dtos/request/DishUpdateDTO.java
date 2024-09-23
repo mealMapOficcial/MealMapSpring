@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,21 +20,11 @@ import java.util.List;
 @Builder
 public class DishUpdateDTO {
 
-    @NotBlank(message = "Name is required")
     private String name;
-
-    @NotNull(message = "Price is required")
-    @Positive(message = "Price must be positive")
-    private float price;
-
-    @NotNull
-    private boolean promotion;
-
-    @NotNull(message = "Type of Dishes is required")
+    private Float price;
+    private Boolean promotion;
+    private String imageUrl;
     private TypeOfDishes typeOfDishes;
-
-    @NotNull(message = "Ingredients are required")
-    @Size(min = 1, message = "At least one ingredient is required")
-    private List<IngredientUpdateDTO> ingredients;
+    private List<IngredientUpdateDTO> ingredients = new ArrayList<>();
 }
 

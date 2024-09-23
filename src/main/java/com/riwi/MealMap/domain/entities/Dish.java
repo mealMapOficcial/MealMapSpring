@@ -38,6 +38,9 @@ public class Dish {
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToMany
     @JoinTable(
             name = "dishes_ingredients",
