@@ -29,6 +29,8 @@ public class DishUpdateDTO {
     @NotNull
     private boolean promotion;
 
+    private String imageUrl;
+
     @NotNull(message = "Type of Dishes is required")
     private TypeOfDishes typeOfDishes;
 

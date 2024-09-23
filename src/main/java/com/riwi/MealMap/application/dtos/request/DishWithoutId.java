@@ -34,6 +34,8 @@ public class DishWithoutId {
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;
 
+    private String imageUrl;
+
     @NotNull(message = "Ingredients are required")
     @Size(min = 1, message = "At least one ingredient is required")
     private List<IngredientsOnlyWithName> ingredients;

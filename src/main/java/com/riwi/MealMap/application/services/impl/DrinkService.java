@@ -42,6 +42,7 @@ public class DrinkService implements IDrinkService {
                 .name(drinkDTO.getName())
                 .price(drinkDTO.getPrice())
                 .promotion(drinkDTO.isPromotion())
+                .imageUrl(drinkDTO.getImageUrl())
                 .typeOfDrinks(drinkDTO.getTypeOfDrinks())
                 .build();
 
@@ -135,31 +136,46 @@ public class DrinkService implements IDrinkService {
         Drink existingDrink = drinkRepository.findById(id)
                 .orElseThrow(() -> new GenericNotFoundExceptions("Drink not found"));
 
-        existingDrink.setName(drinkDTO.getName());
-        existingDrink.setPrice(drinkDTO.getPrice());
-        existingDrink.setPromotion(drinkDTO.isPromotion());
-        existingDrink.setTypeOfDrinks(drinkDTO.getTypeOfDrinks());
-
-        List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
-
-        for (IngredientUpdateDTO requestIngredient : drinkDTO.getIngredients()) {
-            Ingredient ingredient = ingredientRepository.findOneByName(requestIngredient.getName())
-                    .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
-
-            DrinksIngredients drinksIngredients = new DrinksIngredients();
-            drinksIngredients.setIngredients(ingredient);
-
-            drinksIngredientsList.add(drinksIngredients);
+        if (drinkDTO.getName() != null) {
+            existingDrink.setName(drinkDTO.getName());
+        }
+        if (drinkDTO.getPrice() != null) {
+            existingDrink.setPrice(drinkDTO.getPrice());
+        }
+        if (drinkDTO.getPromotion() != null) {
+            existingDrink.setPromotion(drinkDTO.getPromotion());
+        }
+        if (drinkDTO.getImageUrl() != null) {
+            existingDrink.setImageUrl(drinkDTO.getImageUrl());
+        }
+        if (drinkDTO.getTypeOfDrinks() != null) {
+            existingDrink.setTypeOfDrinks(drinkDTO.getTypeOfDrinks());
         }
 
-        List<Ingredient> ingredientList = drinksIngredientsList.stream()
-                .map(DrinksIngredients::getIngredients)
-                .collect(Collectors.toList());
+        // Manejo de ingredientes
+        List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
 
-        existingDrink.setIngredients(ingredientList);
+        if (drinkDTO.getIngredients() != null && !drinkDTO.getIngredients().isEmpty()) {
+            for (IngredientUpdateDTO requestIngredient : drinkDTO.getIngredients()) {
+                Ingredient ingredient = ingredientRepository.findOneByName(requestIngredient.getName())
+                        .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
+
+                DrinksIngredients drinksIngredients = new DrinksIngredients();
+                drinksIngredients.setIngredients(ingredient);
+                drinksIngredientsList.add(drinksIngredients);
+            }
+        }
+
+        // Si drinksIngredientsList no está vacío, actualizar ingredientes
+        if (!drinksIngredientsList.isEmpty()) {
+            existingDrink.setIngredients(drinksIngredientsList.stream()
+                    .map(DrinksIngredients::getIngredients)
+                    .collect(Collectors.toList()));
+        }
 
         Drink savedDrink = drinkRepository.save(existingDrink);
-
         return ResponseEntity.ok(savedDrink);
     }
+
+
 }

@@ -48,6 +48,7 @@ public class DishService implements IDishService {
                     .name(dishDTO.getName())
                     .price(dishDTO.getPrice())
                     .promotion(dishDTO.isPromotion())
+                    .imageUrl(dishDTO.getImageUrl())
                     .typeOfDishes(dishDTO.getTypeOfDishes())
                     .build();
 
@@ -169,6 +170,7 @@ public class DishService implements IDishService {
             existingDish.setName(dishDTO.getName());
             existingDish.setPrice(dishDTO.getPrice());
             existingDish.setPromotion(dishDTO.isPromotion());
+            existingDish.setImageUrl(dishDTO.getImageUrl());
             existingDish.setTypeOfDishes(dishDTO.getTypeOfDishes());
 
             List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
