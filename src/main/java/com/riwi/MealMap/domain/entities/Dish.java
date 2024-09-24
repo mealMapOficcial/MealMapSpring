@@ -38,7 +38,7 @@ public class Dish {
     @Enumerated(EnumType.STRING)
     private TypeOfDishes typeOfDishes;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 1500)
     private String imageUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)
