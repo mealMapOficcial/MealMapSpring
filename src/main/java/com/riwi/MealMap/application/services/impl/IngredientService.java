@@ -30,13 +30,14 @@ public class IngredientService implements IIngredientService {
                 .name(ingredientDTO.getName())
                 .price(ingredientDTO.getPrice())
                 .measure(ingredientDTO.getMeasure())
+                .quantity(ingredientDTO.getQuantity())
                 .build();
 
         Ingredient savedIngredient = ingredientRepository.save(ingredient);
 
         Stock stock = Stock.builder()
                 .ingredients(savedIngredient)
-                .amount(10)
+                .quantity(ingredientDTO.getQuantity())
                 .build();
 
         stockRepository.save(stock);

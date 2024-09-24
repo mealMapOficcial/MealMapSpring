@@ -101,7 +101,7 @@ public class DishService implements IDishService {
     private void validateStock(Ingredient ingredient, double quantity) {
         Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingredient.getId()));
         if (stock.isPresent()) {
-            if (stock.get().getAmount() < quantity) {
+            if (stock.get().getQuantity() < quantity) {
                 throw new InsufficientIngredientsException("Not enough to create that dish: " + ingredient.getName());
             }
         } else {

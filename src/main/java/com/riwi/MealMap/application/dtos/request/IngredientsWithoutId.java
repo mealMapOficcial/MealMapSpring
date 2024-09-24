@@ -1,5 +1,6 @@
 package com.riwi.MealMap.application.dtos.request;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -22,4 +23,8 @@ public class IngredientsWithoutId {
 
     @NotBlank(message = "Measure is required")
     private String measure;
+
+    @NotNull
+    @Min(1)
+    private Long quantity;
 }

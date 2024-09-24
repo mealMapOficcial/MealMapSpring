@@ -90,7 +90,7 @@ public class DrinkService implements IDrinkService {
     private void validateStock(Ingredient ingrediente, double quantity) {
         Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
         if (stock.isPresent()) {
-            if (stock.get().getAmount() < quantity) {
+            if (stock.get().getQuantity() < quantity) {
                 throw new GenericNotFoundExceptions("Not enough to create that drink: " + ingrediente.getName());
             }
         } else {

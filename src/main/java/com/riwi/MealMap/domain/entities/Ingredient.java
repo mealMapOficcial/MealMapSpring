@@ -30,4 +30,6 @@ public class Ingredient {
     @Column(nullable = false)
     private String measure;
 
+    @Column(nullable = false)
+    private Long quantity;
 }

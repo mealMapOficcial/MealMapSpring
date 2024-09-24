@@ -20,5 +20,5 @@ public class Stock {
     private Ingredient ingredients;
 
     @Column(nullable = false)
-    private double amount;
+    private Long quantity;
 }
