@@ -48,14 +48,12 @@ public class IngredientController implements IIngredientService {
 
     @Override
     @GetMapping("/readAll")
-    @FetchOrders
     public List<Ingredient> readAll() {
         return ingredientService.readAll();
     }
 
     @Override
     @GetMapping("/readById/{id}")
-    @FetchOrders
     public Optional<Ingredient> readById(@PathVariable Integer id) {
 
         Optional<Ingredient> ingredient = ingredientService.readById(id);
@@ -65,7 +63,6 @@ public class IngredientController implements IIngredientService {
 
     @Override
     @GetMapping("/readByName/{name}")
-    @FetchOrders
     public ResponseEntity<Ingredient> readByName(@PathVariable String name) {
         return ingredientService.readByName(name);
     }

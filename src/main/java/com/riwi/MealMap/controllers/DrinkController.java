@@ -60,7 +60,6 @@ public class DrinkController {
 
 
     @GetMapping("/readById/{id}")
-    @FetchOrders
     public Optional<Drink> readById(@PathVariable Integer id) {
 
         Optional<Drink> drink = drinkService.readById(id);
@@ -70,7 +69,6 @@ public class DrinkController {
 
 
     @GetMapping("/readByName/{name}")
-    @FetchOrders
     public ResponseEntity<Drink> readByName(@PathVariable String name) {
         return drinkService.readByName(name);
     }
