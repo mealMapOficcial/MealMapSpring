@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.riwi.MealMap.application.dtos.exception.EntityAlreadyExistsException;
+import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
+import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
 import com.riwi.MealMap.application.dtos.request.*;
 import com.riwi.MealMap.domain.entities.*;
 import com.riwi.MealMap.domain.ports.service.IDrinkService;
@@ -15,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
 @Service
 @Transactional
@@ -38,79 +39,101 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public DrinkWithoutId createGeneric(DrinkWithoutId drinkDTO) {
-        Drink drink = Drink.builder()
-                .name(drinkDTO.getName())
-                .price(drinkDTO.getPrice())
-                .promotion(drinkDTO.isPromotion())
-                .imageUrl(drinkDTO.getImageUrl())
-                .typeOfDrinks(drinkDTO.getTypeOfDrinks())
-                .build();
 
-        drink = this.drinkRepository.save(drink);
-
-        List<IngredientsOnlyWithName> ingredientsRequest = drinkDTO.getIngredients();
-        List<Ingredient> ingredients = new ArrayList<>();
-        List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
-
-        for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
-            Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
-                    .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
-
-            validateStock(ingredient, requestIngredient.getQuantity());
-
-            DrinksIngredients drinksIngredients = DrinksIngredients.builder()
-                    .ingredients(ingredient)
-                    .quantity(requestIngredient.getQuantity())
-                    .drinks(drink)
-                    .build();
-
-            drinksIngredientsList.add(drinksIngredients);
-            ingredients.add(ingredient);
+        if (drinkRepository.findByName(drinkDTO.getName()).isPresent()) {
+            throw new EntityAlreadyExistsException("Drink already exists with name: " + drinkDTO.getName());
         }
 
-        this.drinkIngredientRepository.saveAll(drinksIngredientsList);
+        try {
+            Drink drink = Drink.builder()
+                    .name(drinkDTO.getName())
+                    .price(drinkDTO.getPrice())
+                    .promotion(drinkDTO.isPromotion())
+                    .imageUrl(drinkDTO.getImageUrl())
+                    .typeOfDrinks(drinkDTO.getTypeOfDrinks())
+                    .build();
 
-        drink.setIngredients(ingredients);
+            drink = this.drinkRepository.save(drink);
+            List<IngredientsOnlyWithName> ingredientsRequest = drinkDTO.getIngredients();
+            List<Ingredient> ingredients = new ArrayList<>();
+            List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
 
-        List<IngredientsOnlyWithName> ingredientsDrinks = ingredients.stream()
-                .map(ingredient -> IngredientsOnlyWithName.builder()
-                        .name(ingredient.getName())
-                        .build())
-                .collect(Collectors.toList());
+            for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+                Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
+                        .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found: " + requestIngredient.getName()));
 
-        return DrinkWithoutId.builder()
-                .name(drink.getName())
-                .price(drink.getPrice())
-                .promotion(drink.isPromotion())
-                .typeOfDrinks(drink.getTypeOfDrinks())
-                .ingredients(ingredientsDrinks)
-                .build();
+                validateStock(ingredient, requestIngredient.getQuantity());
+
+                DrinksIngredients drinksIngredients = DrinksIngredients.builder()
+                        .ingredients(ingredient)
+                        .quantity(requestIngredient.getQuantity())
+                        .drinks(drink)
+                        .build();
+
+                drinksIngredientsList.add(drinksIngredients);
+                ingredients.add(ingredient);
+            }
+
+            this.drinkIngredientRepository.saveAll(drinksIngredientsList);
+            drink.setIngredients(ingredients);
+
+            List<IngredientsOnlyWithName> ingredientsDrinks = ingredients.stream()
+                    .map(ingredient -> IngredientsOnlyWithName.builder()
+                            .name(ingredient.getName())
+                            .build())
+                    .collect(Collectors.toList());
+
+            return DrinkWithoutId.builder()
+                    .name(drink.getName())
+                    .price(drink.getPrice())
+                    .promotion(drink.isPromotion())
+                    .typeOfDrinks(drink.getTypeOfDrinks())
+                    .ingredients(ingredientsDrinks)
+                    .build();
+        } catch (GenericNotFoundExceptions | InsufficientIngredientsException ex) {
+            logger.error("Error creating drink: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Unexpected error: {}", ex.getMessage());
+            throw new RuntimeException("Failed to create drink: " + ex.getMessage());
+        }
     }
 
-    private void validateStock(Ingredient ingrediente, double quantity) {
-        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingrediente.getId()));
+    private void validateStock(Ingredient ingredient, double quantity) {
+        Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingredient.getId()));
         if (stock.isPresent()) {
             if (stock.get().getQuantity() < quantity) {
-                throw new GenericNotFoundExceptions("Not enough to create that drink: " + ingrediente.getName());
+                throw new InsufficientIngredientsException("Not enough to create that drink: " + ingredient.getName());
             }
         } else {
-            throw new GenericNotFoundExceptions("Stock not found for ingredient: " + ingrediente.getName());
+            throw new GenericNotFoundExceptions("Stock not found for ingredient: " + ingredient.getName());
         }
     }
 
     @Override
     public void delete(Integer id) {
         try {
+            if (!drinkRepository.existsById(id)) {
+                throw new GenericNotFoundExceptions("Drink not found with id: " + id);
+            }
             drinkRepository.deleteById(id);
+        } catch (GenericNotFoundExceptions ex) {
+            logger.error("Error deleting drink: {}", ex.getMessage());
+            throw ex;
         } catch (Exception ex) {
-            logger.error("Error deleting drink with id {}: {}", id, ex.getMessage());
-            throw new GenericNotFoundExceptions("Drink not found with id: " + id);
+            logger.error("Unexpected error during deletion: {}", ex.getMessage());
+            throw new RuntimeException("Failed to delete drink: " + ex.getMessage());
         }
     }
 
     @Override
     public List<Drink> readAll() {
-        return drinkRepository.findAll();
+        try {
+            return drinkRepository.findAll();
+        } catch (Exception ex) {
+            logger.error("Error retrieving drinks: {}", ex.getMessage());
+            throw new RuntimeException("Failed to retrieve drinks: " + ex.getMessage());
+        }
     }
 
     @Override
@@ -122,19 +145,26 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public ResponseEntity<Drink> readByName(String name) {
-        Optional<Drink> drink = drinkRepository.findByName(name);
-
-        if (drink.isPresent()) {
-            return ResponseEntity.ok(drink.get());
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            Optional<Drink> drink = drinkRepository.findByName(name);
+            if (drink.isPresent()) {
+                return ResponseEntity.ok(drink.get());
+            } else {
+                throw new GenericNotFoundExceptions("Drink not found with name: " + name);
+            }
+        } catch (GenericNotFoundExceptions ex) {
+            logger.error("Error retrieving drink by name: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Unexpected error retrieving drink: {}", ex.getMessage());
+            throw new RuntimeException("Failed to retrieve drink: " + ex.getMessage());
         }
     }
 
     @Override
     public ResponseEntity<Drink> updateDTO(Integer id, DrinkUpdateDTO drinkDTO) {
         Drink existingDrink = drinkRepository.findById(id)
-                .orElseThrow(() -> new GenericNotFoundExceptions("Drink not found"));
+                .orElseThrow(() -> new GenericNotFoundExceptions("Drink not found with id: " + id));
 
         if (drinkDTO.getName() != null) {
             existingDrink.setName(drinkDTO.getName());
@@ -157,7 +187,7 @@ public class DrinkService implements IDrinkService {
         if (drinkDTO.getIngredients() != null && !drinkDTO.getIngredients().isEmpty()) {
             for (IngredientUpdateDTO requestIngredient : drinkDTO.getIngredients()) {
                 Ingredient ingredient = ingredientRepository.findOneByName(requestIngredient.getName())
-                        .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found"));
+                        .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found: " + requestIngredient.getName()));
 
                 DrinksIngredients drinksIngredients = new DrinksIngredients();
                 drinksIngredients.setIngredients(ingredient);

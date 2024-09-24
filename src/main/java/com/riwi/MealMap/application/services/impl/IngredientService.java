@@ -1,5 +1,6 @@
 package com.riwi.MealMap.application.services.impl;
 
+import com.riwi.MealMap.application.dtos.exception.EntityAlreadyExistsException;
 import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
 import com.riwi.MealMap.domain.entities.Stock;
@@ -25,6 +26,10 @@ public class IngredientService implements IIngredientService {
 
     @Override
     public ResponseEntity<Ingredient> createDTO(IngredientsWithoutId ingredientDTO) {
+
+        if (ingredientRepository.findOneByName(ingredientDTO.getName()).isPresent()) {
+            throw new EntityAlreadyExistsException("Ingredient already exists with name: " + ingredientDTO.getName());
+        }
 
         Ingredient ingredient = Ingredient.builder()
                 .name(ingredientDTO.getName())

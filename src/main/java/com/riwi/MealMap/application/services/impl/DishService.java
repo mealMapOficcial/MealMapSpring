@@ -5,12 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.riwi.MealMap.application.dtos.exception.*;
 import com.riwi.MealMap.application.dtos.request.*;
 import com.riwi.MealMap.domain.entities.*;
-import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
-import com.riwi.MealMap.application.dtos.exception.IngredientNotFoundException;
-import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
-import com.riwi.MealMap.application.dtos.exception.StockNotFoundException;
 
 import com.riwi.MealMap.domain.ports.service.IDishService;
 import com.riwi.MealMap.infrastructure.persistence.DishIngredientRepository;
@@ -43,6 +40,11 @@ public class DishService implements IDishService {
 
     @Override
     public DishWithoutId createGeneric(DishWithoutId dishDTO) {
+
+        if (dishRepository.findByName(dishDTO.getName()).isPresent()) {
+            throw new EntityAlreadyExistsException("Dish already exists with name: " + dishDTO.getName());
+        }
+
         try {
             Dish dish = Dish.builder()
                     .name(dishDTO.getName())
@@ -81,6 +83,7 @@ public class DishService implements IDishService {
                             .name(ingredient.getName())
                             .build())
                     .collect(Collectors.toList());
+
 
             return DishWithoutId.builder()
                     .name(dish.getName())
