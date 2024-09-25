@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.riwi.MealMap.application.dtos.exception.EntityAlreadyExistsException;
-import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
+import com.riwi.MealMap.application.dtos.exception.GenericExceptions;
 import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
 import com.riwi.MealMap.application.dtos.request.*;
 import com.riwi.MealMap.domain.entities.*;
@@ -60,7 +60,7 @@ public class DrinkService implements IDrinkService {
 
             for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
                 Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
-                        .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found: " + requestIngredient.getName()));
+                        .orElseThrow(() -> new GenericExceptions("Ingredient not found: " + requestIngredient.getName()));
 
                 validateStock(ingredient, requestIngredient.getQuantity());
 
@@ -90,7 +90,7 @@ public class DrinkService implements IDrinkService {
                     .typeOfDrinks(drink.getTypeOfDrinks())
                     .ingredients(ingredientsDrinks)
                     .build();
-        } catch (GenericNotFoundExceptions | InsufficientIngredientsException ex) {
+        } catch (GenericExceptions | InsufficientIngredientsException ex) {
             logger.error("Error creating drink: {}", ex.getMessage());
             throw ex;
         } catch (Exception ex) {
@@ -106,7 +106,7 @@ public class DrinkService implements IDrinkService {
                 throw new InsufficientIngredientsException("Not enough to create that drink: " + ingredient.getName());
             }
         } else {
-            throw new GenericNotFoundExceptions("Stock not found for ingredient: " + ingredient.getName());
+            throw new GenericExceptions("Stock not found for ingredient: " + ingredient.getName());
         }
     }
 
@@ -114,10 +114,10 @@ public class DrinkService implements IDrinkService {
     public void delete(Integer id) {
         try {
             if (!drinkRepository.existsById(id)) {
-                throw new GenericNotFoundExceptions("Drink not found with id: " + id);
+                throw new GenericExceptions("Drink not found with id: " + id);
             }
             drinkRepository.deleteById(id);
-        } catch (GenericNotFoundExceptions ex) {
+        } catch (GenericExceptions ex) {
             logger.error("Error deleting drink: {}", ex.getMessage());
             throw ex;
         } catch (Exception ex) {
@@ -140,7 +140,7 @@ public class DrinkService implements IDrinkService {
     public Optional<Drink> readById(Integer id) {
         return drinkRepository.findById(id)
                 .map(Optional::of)
-                .orElseThrow(() -> new GenericNotFoundExceptions("Drink not found with id: " + id));
+                .orElseThrow(() -> new GenericExceptions("Drink not found with id: " + id));
     }
 
     @Override
@@ -150,9 +150,9 @@ public class DrinkService implements IDrinkService {
             if (drink.isPresent()) {
                 return ResponseEntity.ok(drink.get());
             } else {
-                throw new GenericNotFoundExceptions("Drink not found with name: " + name);
+                throw new GenericExceptions("Drink not found with name: " + name);
             }
-        } catch (GenericNotFoundExceptions ex) {
+        } catch (GenericExceptions ex) {
             logger.error("Error retrieving drink by name: {}", ex.getMessage());
             throw ex;
         } catch (Exception ex) {
@@ -164,7 +164,7 @@ public class DrinkService implements IDrinkService {
     @Override
     public ResponseEntity<Drink> updateDTO(Integer id, DrinkUpdateDTO drinkDTO) {
         Drink existingDrink = drinkRepository.findById(id)
-                .orElseThrow(() -> new GenericNotFoundExceptions("Drink not found with id: " + id));
+                .orElseThrow(() -> new GenericExceptions("Drink not found with id: " + id));
 
         if (drinkDTO.getName() != null) {
             existingDrink.setName(drinkDTO.getName());
@@ -187,7 +187,7 @@ public class DrinkService implements IDrinkService {
         if (drinkDTO.getIngredients() != null && !drinkDTO.getIngredients().isEmpty()) {
             for (IngredientUpdateDTO requestIngredient : drinkDTO.getIngredients()) {
                 Ingredient ingredient = ingredientRepository.findOneByName(requestIngredient.getName())
-                        .orElseThrow(() -> new GenericNotFoundExceptions("Ingredient not found: " + requestIngredient.getName()));
+                        .orElseThrow(() -> new GenericExceptions("Ingredient not found: " + requestIngredient.getName()));
 
                 DrinksIngredients drinksIngredients = new DrinksIngredients();
                 drinksIngredients.setIngredients(ingredient);

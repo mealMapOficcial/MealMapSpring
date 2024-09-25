@@ -12,4 +12,6 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
     @Query("SELECT s FROM Stock s WHERE s.ingredients.id = :idIngredient")
     Stock findByIngredientId(@Param("idIngredient") Integer idIngredient);
     void deleteByIngredients_Id(Integer ingredientId);
+
+    Optional<Stock> findByIngredients_Name(String ingredientName);
 }

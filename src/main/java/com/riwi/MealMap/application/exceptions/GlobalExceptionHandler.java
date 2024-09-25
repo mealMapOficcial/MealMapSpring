@@ -1,11 +1,12 @@
 package com.riwi.MealMap.application.exceptions;
 
-import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
+import com.riwi.MealMap.application.dtos.exception.GenericExceptions;
 import com.riwi.MealMap.application.dtos.exception.IngredientNotFoundException;
 import com.riwi.MealMap.application.dtos.exception.InsufficientIngredientsException;
 import com.riwi.MealMap.application.dtos.exception.StockNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -27,8 +28,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler(GenericNotFoundExceptions.class)
-    public ResponseEntity<String> handleGenericNotFoundException(GenericNotFoundExceptions ex) {
+    @ExceptionHandler(GenericExceptions.class)
+    public ResponseEntity<String> handleGenericNotFoundException(GenericExceptions ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
@@ -36,4 +37,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGlobalException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + ex.getMessage());
     }
+
 }

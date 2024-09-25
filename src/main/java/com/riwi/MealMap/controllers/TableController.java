@@ -1,9 +1,7 @@
 package com.riwi.MealMap.controllers;
 
-import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
-import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
-import com.riwi.MealMap.application.dtos.request.TableWithoutId;
-import com.riwi.MealMap.domain.entities.Drink;
+import com.riwi.MealMap.application.dtos.exception.GenericExceptions;
+import com.riwi.MealMap.application.dtos.request.TableDTO;
 import com.riwi.MealMap.domain.entities.Table;
 import com.riwi.MealMap.domain.ports.service.ITableService;
 import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;
@@ -17,23 +15,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tables")
 public class TableController {
 
     @Autowired
-    private ITableService tableService;
+    ITableService tableService;
 
     @PostMapping("/create")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Table created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(schema = @Schema(implementation = ExceptionsResponse.class)))
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(schema = @Schema(implementation = GenericExceptions.class)))
     })
     public ResponseEntity<?> create(@RequestBody Table table) {
-
-        ResponseEntity<Table> tableEntity = this.tableService.create(table);
-        return ResponseEntity.status(HttpStatus.CREATED).body(tableEntity);
+        try {
+            ResponseEntity<Table> tableEntity = tableService.create(table);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tableEntity);
+        } catch (GenericExceptions ex) {
+            return ResponseEntity.badRequest().body(new GenericExceptions(ex.getMessage()));
+        }
     }
 
     @GetMapping("/readAll")
@@ -41,5 +43,11 @@ public class TableController {
     public List<Table> readAll() {
         return tableService.readAll();
     }
-}
 
+    @GetMapping("/available/{numberOfPeople}")
+    public ResponseEntity<?> getAvailableTable(@PathVariable Integer numberOfPeople) {
+        TableDTO tableDTO = tableService.getAvailableTable(numberOfPeople);
+
+        return ResponseEntity.ok(tableDTO);
+    }
+}
