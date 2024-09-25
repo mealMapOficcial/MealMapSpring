@@ -2,7 +2,6 @@ package com.riwi.MealMap.controllers;
 
 import com.riwi.MealMap.application.dtos.request.DishUpdateDTO;
 import com.riwi.MealMap.application.dtos.request.DishWithoutId;
-import com.riwi.MealMap.application.dtos.request.DishWithoutIdAndWithDTO;
 import com.riwi.MealMap.domain.entities.Dish;
 import com.riwi.MealMap.application.services.impl.DishService;
 
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
-import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 
 @RestController
 @RequestMapping("/dish")

@@ -4,9 +4,9 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class GenericNotFoundExceptions extends RuntimeException {
+public class GenericExceptions extends RuntimeException {
 
-    public GenericNotFoundExceptions(String message) {
+    public GenericExceptions(String message) {
         super(message);
     }
 

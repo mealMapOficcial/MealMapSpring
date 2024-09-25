@@ -1,10 +1,8 @@
 package com.riwi.MealMap.controllers;
 
 import com.riwi.MealMap.application.dtos.exception.ExceptionsResponse;
-import com.riwi.MealMap.application.dtos.exception.GenericNotFoundExceptions;
 import com.riwi.MealMap.application.dtos.request.DrinkUpdateDTO;
 import com.riwi.MealMap.application.dtos.request.DrinkWithoutId;
-import com.riwi.MealMap.application.dtos.request.DrinkWithoutIdAndWithDTO;
 import com.riwi.MealMap.application.services.impl.DrinkService;
 import com.riwi.MealMap.domain.entities.Drink;
 import com.riwi.MealMap.infrastructure.config.annotations.FetchOrders;

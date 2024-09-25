@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DishService implements IDishService {
@@ -116,10 +115,10 @@ public class DishService implements IDishService {
     public void delete(Integer id) {
         try {
             if (!dishRepository.existsById(id)) {
-                throw new GenericNotFoundExceptions("Dish not found with id: " + id);
+                throw new GenericExceptions("Dish not found with id: " + id);
             }
             dishRepository.deleteById(id);
-        } catch (GenericNotFoundExceptions ex) {
+        } catch (GenericExceptions ex) {
             logger.error("Error deleting dish: {}", ex.getMessage());
             throw ex;
         } catch (Exception ex) {
@@ -142,7 +141,7 @@ public class DishService implements IDishService {
     public Optional<Dish> readById(Integer id) {
         return dishRepository.findById(id)
                 .map(Optional::of)
-                .orElseThrow(() -> new GenericNotFoundExceptions("Dish not found with id: " + id));
+                .orElseThrow(() -> new GenericExceptions("Dish not found with id: " + id));
     }
 
 
@@ -153,9 +152,9 @@ public class DishService implements IDishService {
             if (dish.isPresent()) {
                 return ResponseEntity.ok(dish.get());
             } else {
-                throw new GenericNotFoundExceptions("Dish not found with name: " + name);
+                throw new GenericExceptions("Dish not found with name: " + name);
             }
-        } catch (GenericNotFoundExceptions ex) {
+        } catch (GenericExceptions ex) {
             logger.error("Error retrieving dish by name: {}", ex.getMessage());
             throw ex;
         } catch (Exception ex) {
@@ -167,7 +166,7 @@ public class DishService implements IDishService {
     @Override
     public ResponseEntity<Dish> updateDTO(Integer id, DishUpdateDTO dishDTO) {
         Dish existingDish = dishRepository.findById(id)
-                .orElseThrow(() -> new GenericNotFoundExceptions("Dish not found with id: " + id));
+                .orElseThrow(() -> new GenericExceptions("Dish not found with id: " + id));
 
         if (dishDTO.getName() != null) {
             existingDish.setName(dishDTO.getName());
