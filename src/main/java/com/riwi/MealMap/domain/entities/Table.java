@@ -25,4 +25,8 @@ public class Table {
     @Column(nullable = false)
     private Integer floor;
 
+    public boolean isAvailable() {
+        this.disponibility = !this.disponibility;
+        return false;
+    }
 }

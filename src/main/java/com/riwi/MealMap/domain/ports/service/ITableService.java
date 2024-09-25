@@ -11,7 +11,10 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Optional;
 
-public interface ITableService {
+public interface ITableService extends
+
+    UpdateTable<TableWithoutId, Integer>{
+
     ResponseEntity<Table> create(Table table);
     List<Table> readAll();
     TableDTO getAvailableTable(Integer numberOfPeople);
