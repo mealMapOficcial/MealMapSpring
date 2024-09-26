@@ -21,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/tables")
+@CrossOrigin("*")
 public class TableController {
 
     @Autowired
