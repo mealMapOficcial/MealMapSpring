@@ -41,7 +41,6 @@ public class TableController {
     }
 
     @GetMapping("/readAll")
-    @FetchOrders
     public List<Table> readAll() {
         return tableService.readAll();
     }
