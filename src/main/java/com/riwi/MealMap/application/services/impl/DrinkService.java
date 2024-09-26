@@ -94,7 +94,7 @@ public class DrinkService implements IDrinkService {
         Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingredient.getId()));
         if (stock.isPresent()) {
             if (stock.get().getQuantity() < quantity) {
-                throw new InsufficientIngredientsException("Not enough to create that drink: " + ingredient.getName());
+                throw new InsufficientIngredientsException("There is not enough stock to create this drink: " + ingredient.getName());
             }
         } else {
             throw new GenericExceptions("Stock not found for ingredient: " + ingredient.getName());

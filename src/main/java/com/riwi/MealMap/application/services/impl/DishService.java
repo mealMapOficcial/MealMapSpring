@@ -92,7 +92,7 @@ public class DishService implements IDishService {
         Optional<Stock> stock = Optional.ofNullable(this.stockRepository.findByIngredientId(ingredient.getId()));
         if (stock.isPresent()) {
             if (stock.get().getQuantity() < quantity) {
-                throw new InsufficientIngredientsException("Not enough to create that dish: " + ingredient.getName());
+                throw new InsufficientIngredientsException("There is not enough stock to create this dish: " + ingredient.getName());
             }
         } else {
             throw new StockNotFoundException("Stock not found for ingredient: " + ingredient.getName());

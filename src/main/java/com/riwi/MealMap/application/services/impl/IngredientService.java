@@ -77,7 +77,6 @@ public class IngredientService implements IIngredientService {
         ingredientRepository.deleteById(id);
     }
 
-    @Override
     public ResponseEntity<Ingredient> update(Integer id, Ingredient ingredient) {
         Ingredient existingIngredient = ingredientRepository.findById(id).orElse(null);
 
@@ -86,12 +85,21 @@ public class IngredientService implements IIngredientService {
             existingIngredient.setPrice(ingredient.getPrice());
             existingIngredient.setMeasure(ingredient.getMeasure());
 
+            Stock existingStock = stockRepository.findByIngredientId(existingIngredient.getId());
+            if (existingStock != null) {
+                existingStock.setQuantity(ingredient.getQuantity());
+                stockRepository.save(existingStock);
+            } else {
+                throw new GenericExceptions("Stock not found for ingredient: " + existingIngredient.getName());
+            }
+
             Ingredient savedIngredient = ingredientRepository.save(existingIngredient);
             return ResponseEntity.ok(savedIngredient);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
 
     public void validateStock(Ingredient ingredient, double quantity) {
         Optional<Stock> stock = Optional.ofNullable(stockRepository.findByIngredientId(ingredient.getId()));
