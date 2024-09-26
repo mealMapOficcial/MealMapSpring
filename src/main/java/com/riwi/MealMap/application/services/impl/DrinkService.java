@@ -39,64 +39,55 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public DrinkWithoutId createGeneric(DrinkWithoutId drinkDTO) {
-
         if (drinkRepository.findByName(drinkDTO.getName()).isPresent()) {
             throw new EntityAlreadyExistsException("Drink already exists with name: " + drinkDTO.getName());
         }
 
-        try {
-            Drink drink = Drink.builder()
-                    .name(drinkDTO.getName())
-                    .price(drinkDTO.getPrice())
-                    .promotion(drinkDTO.isPromotion())
-                    .imageUrl(drinkDTO.getImageUrl())
-                    .typeOfDrinks(drinkDTO.getTypeOfDrinks())
+        List<IngredientsOnlyWithName> ingredientsRequest = drinkDTO.getIngredients();
+        List<Ingredient> ingredients = new ArrayList<>();
+        List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
+
+        // Verifica la disponibilidad de todos los ingredientes antes de crear la bebida
+        for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+            Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
+                    .orElseThrow(() -> new GenericExceptions("Ingredient not found: " + requestIngredient.getName()));
+
+            validateStock(ingredient, requestIngredient.getQuantity());
+            ingredients.add(ingredient);
+
+            DrinksIngredients drinksIngredients = DrinksIngredients.builder()
+                    .ingredients(ingredient)
+                    .quantity(requestIngredient.getQuantity())
                     .build();
-
-            drink = this.drinkRepository.save(drink);
-            List<IngredientsOnlyWithName> ingredientsRequest = drinkDTO.getIngredients();
-            List<Ingredient> ingredients = new ArrayList<>();
-            List<DrinksIngredients> drinksIngredientsList = new ArrayList<>();
-
-            for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
-                Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
-                        .orElseThrow(() -> new GenericExceptions("Ingredient not found: " + requestIngredient.getName()));
-
-                validateStock(ingredient, requestIngredient.getQuantity());
-
-                DrinksIngredients drinksIngredients = DrinksIngredients.builder()
-                        .ingredients(ingredient)
-                        .quantity(requestIngredient.getQuantity())
-                        .drinks(drink)
-                        .build();
-
-                drinksIngredientsList.add(drinksIngredients);
-                ingredients.add(ingredient);
-            }
-
-            this.drinkIngredientRepository.saveAll(drinksIngredientsList);
-            drink.setIngredients(ingredients);
-
-            List<IngredientsOnlyWithName> ingredientsDrinks = ingredients.stream()
-                    .map(ingredient -> IngredientsOnlyWithName.builder()
-                            .name(ingredient.getName())
-                            .build())
-                    .collect(Collectors.toList());
-
-            return DrinkWithoutId.builder()
-                    .name(drink.getName())
-                    .price(drink.getPrice())
-                    .promotion(drink.isPromotion())
-                    .typeOfDrinks(drink.getTypeOfDrinks())
-                    .ingredients(ingredientsDrinks)
-                    .build();
-        } catch (GenericExceptions | InsufficientIngredientsException ex) {
-            logger.error("Error creating drink: {}", ex.getMessage());
-            throw ex;
-        } catch (Exception ex) {
-            logger.error("Unexpected error: {}", ex.getMessage());
-            throw new RuntimeException("Failed to create drink: " + ex.getMessage());
+            drinksIngredientsList.add(drinksIngredients);
         }
+
+        // Si todos los ingredientes son válidos, crea la bebida
+        Drink drink = Drink.builder()
+                .name(drinkDTO.getName())
+                .price(drinkDTO.getPrice())
+                .promotion(drinkDTO.isPromotion())
+                .imageUrl(drinkDTO.getImageUrl())
+                .typeOfDrinks(drinkDTO.getTypeOfDrinks())
+                .build();
+
+        drink = this.drinkRepository.save(drink);
+        this.drinkIngredientRepository.saveAll(drinksIngredientsList);
+        drink.setIngredients(ingredients);
+
+        List<IngredientsOnlyWithName> ingredientsDrinks = ingredients.stream()
+                .map(ingredient -> IngredientsOnlyWithName.builder()
+                        .name(ingredient.getName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return DrinkWithoutId.builder()
+                .name(drink.getName())
+                .price(drink.getPrice())
+                .promotion(drink.isPromotion())
+                .typeOfDrinks(drink.getTypeOfDrinks())
+                .ingredients(ingredientsDrinks)
+                .build();
     }
 
     private void validateStock(Ingredient ingredient, double quantity) {

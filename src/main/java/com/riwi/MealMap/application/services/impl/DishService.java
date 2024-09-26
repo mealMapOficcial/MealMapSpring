@@ -39,65 +39,53 @@ public class DishService implements IDishService {
 
     @Override
     public DishWithoutId createGeneric(DishWithoutId dishDTO) {
-
         if (dishRepository.findByName(dishDTO.getName()).isPresent()) {
             throw new EntityAlreadyExistsException("Dish already exists with name: " + dishDTO.getName());
         }
 
-        try {
-            Dish dish = Dish.builder()
-                    .name(dishDTO.getName())
-                    .price(dishDTO.getPrice())
-                    .promotion(dishDTO.isPromotion())
-                    .imageUrl(dishDTO.getImageUrl())
-                    .typeOfDishes(dishDTO.getTypeOfDishes())
+        List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
+        List<Ingredient> ingredients = new ArrayList<>();
+        List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
+
+        for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
+            Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
+                    .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found: " + requestIngredient.getName()));
+
+            validateStock(ingredient, requestIngredient.getQuantity());
+            ingredients.add(ingredient);
+
+            DishesIngredients dishesIngredients = DishesIngredients.builder()
+                    .ingredients(ingredient)
+                    .quantity(requestIngredient.getQuantity())
                     .build();
-
-            dish = this.dishRepository.save(dish);
-            List<IngredientsOnlyWithName> ingredientsRequest = dishDTO.getIngredients();
-            List<Ingredient> ingredients = new ArrayList<>();
-            List<DishesIngredients> dishesIngredientsList = new ArrayList<>();
-
-            for (IngredientsOnlyWithName requestIngredient : ingredientsRequest) {
-                Ingredient ingredient = this.ingredientRepository.findOneByName(requestIngredient.getName())
-                        .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found: " + requestIngredient.getName()));
-
-                validateStock(ingredient, requestIngredient.getQuantity());
-
-                DishesIngredients dishesIngredients = DishesIngredients.builder()
-                        .ingredients(ingredient)
-                        .quantity(requestIngredient.getQuantity())
-                        .dishes(dish)
-                        .build();
-
-                dishesIngredientsList.add(dishesIngredients);
-                ingredients.add(ingredient);
-            }
-
-            this.dishIngredientRepository.saveAll(dishesIngredientsList);
-            dish.setIngredients(ingredients);
-
-            List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
-                    .map(ingredient -> IngredientsOnlyWithName.builder()
-                            .name(ingredient.getName())
-                            .build())
-                    .collect(Collectors.toList());
-
-
-            return DishWithoutId.builder()
-                    .name(dish.getName())
-                    .price(dish.getPrice())
-                    .promotion(dish.isPromotion())
-                    .typeOfDishes(dish.getTypeOfDishes())
-                    .ingredients(ingredientsDish)
-                    .build();
-        } catch (IngredientNotFoundException | InsufficientIngredientsException ex) {
-            logger.error("Error creating dish: {}", ex.getMessage());
-            throw ex;
-        } catch (Exception ex) {
-            logger.error("Unexpected error: {}", ex.getMessage());
-            throw new RuntimeException("Failed to create dish: " + ex.getMessage());
+            dishesIngredientsList.add(dishesIngredients);
         }
+
+        Dish dish = Dish.builder()
+                .name(dishDTO.getName())
+                .price(dishDTO.getPrice())
+                .promotion(dishDTO.isPromotion())
+                .imageUrl(dishDTO.getImageUrl())
+                .typeOfDishes(dishDTO.getTypeOfDishes())
+                .build();
+
+        dish = this.dishRepository.save(dish);
+        this.dishIngredientRepository.saveAll(dishesIngredientsList);
+        dish.setIngredients(ingredients);
+
+        List<IngredientsOnlyWithName> ingredientsDish = ingredients.stream()
+                .map(ingredient -> IngredientsOnlyWithName.builder()
+                        .name(ingredient.getName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return DishWithoutId.builder()
+                .name(dish.getName())
+                .price(dish.getPrice())
+                .promotion(dish.isPromotion())
+                .typeOfDishes(dish.getTypeOfDishes())
+                .ingredients(ingredientsDish)
+                .build();
     }
 
     private void validateStock(Ingredient ingredient, double quantity) {
@@ -143,7 +131,6 @@ public class DishService implements IDishService {
                 .map(Optional::of)
                 .orElseThrow(() -> new GenericExceptions("Dish not found with id: " + id));
     }
-
 
     @Override
     public ResponseEntity<Dish> readByName(String name) {

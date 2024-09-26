@@ -1,6 +1,7 @@
 package com.riwi.MealMap.application.services.impl;
 
 import com.riwi.MealMap.application.dtos.exception.EntityAlreadyExistsException;
+import com.riwi.MealMap.application.dtos.exception.GenericExceptions;
 import com.riwi.MealMap.application.dtos.request.IngredientsWithoutId;
 import com.riwi.MealMap.domain.entities.Ingredient;
 import com.riwi.MealMap.domain.entities.Stock;
@@ -81,7 +82,6 @@ public class IngredientService implements IIngredientService {
         Ingredient existingIngredient = ingredientRepository.findById(id).orElse(null);
 
         if (existingIngredient != null) {
-
             existingIngredient.setName(ingredient.getName());
             existingIngredient.setPrice(ingredient.getPrice());
             existingIngredient.setMeasure(ingredient.getMeasure());
@@ -90,6 +90,17 @@ public class IngredientService implements IIngredientService {
             return ResponseEntity.ok(savedIngredient);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    public void validateStock(Ingredient ingredient, double quantity) {
+        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByIngredientId(ingredient.getId()));
+        if (stock.isPresent()) {
+            if (stock.get().getQuantity() < quantity) {
+                throw new GenericExceptions("Not enough stock for ingredient: " + ingredient.getName());
+            }
+        } else {
+            throw new GenericExceptions("Stock not found for ingredient: " + ingredient.getName());
         }
     }
 
